@@ -233,11 +233,20 @@ async function buildA4Sheets(items) {
         currentRowMaxH = 0;
     }
 
+    let lastFormat = null;
     for (let index = 0; index < allCards.length; index++) {
         const card = allCards[index];
         const isMini = card.format === 'mini';
         const cardW = isMini ? 531 : 945;
         const cardH = isMini ? 688 : 766;
+
+        // Force row break when format changes so Mini and Wide stay on dedicated rows
+        if (lastFormat && card.format !== lastFormat && currentX > 80) {
+            currentX = 80;
+            currentY += currentRowMaxH + 50;
+            currentRowMaxH = 0;
+        }
+        lastFormat = card.format;
 
         // Check if card fits horizontally in current row
         if (currentX + cardW + 60 > canvasWidth) {

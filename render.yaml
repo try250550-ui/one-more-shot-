@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: one-more-shot-polaroid
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: ADMIN_USER
+        value: akash
+      - key: ADMIN_PASS
+        value: "021907"
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY
+        sync: false
+      - key: R2_SECRET_KEY
+        sync: false
+      - key: R2_BUCKET
+        value: one-more-shot-uploads

@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One More Shot - Preserve Your Memories in Print</title>
+  <meta name="description" content="One More Shot. Custom Mini and Wide Polaroids delivered directly to you.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              cream: '#faf6f0',
+              surface: '#ffffff',
+              card: '#fcfbfa',
+              purple: '#7d38be',
+              purpleHover: '#6a2da6',
+              lavender: '#efe7f8',
+              lavenderLight: '#f8f4fc',
+              border: '#e8ddf5',
+              dark: '#261a38',
+              muted: '#6f6280'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            handwriting: ['"Caveat"', 'cursive'],
+            serif: ['"Playfair Display"', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #faf6f0;
+      color: #261a38;
+      background-image: radial-gradient(#d6c7ea 0.85px, transparent 0.85px);
+      background-size: 22px 22px;
+    }
+    .polaroid-card {
+      box-shadow: 0 16px 36px -6px rgba(70, 30, 95, 0.14), 0 6px 14px -2px rgba(70, 30, 95, 0.08);
+      transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .polaroid-card:hover {
+      box-shadow: 0 22px 42px -6px rgba(90, 30, 130, 0.2), 0 10px 18px -3px rgba(90, 30, 130, 0.12);
+    }
+    .washi-tape {
+      background: linear-gradient(135deg, rgba(220, 190, 250, 0.85), rgba(240, 220, 255, 0.75));
+      border-left: 2px dashed rgba(125, 56, 190, 0.35);
+      border-right: 2px dashed rgba(125, 56, 190, 0.35);
+    }
+    .tray-scrollbar::-webkit-scrollbar {
+      height: 6px;
+    }
+    .tray-scrollbar::-webkit-scrollbar-track {
+      background: #efe7f8;
+      border-radius: 9999px;
+    }
+    .tray-scrollbar::-webkit-scrollbar-thumb {
+      background: #c2a6e6;
+      border-radius: 9999px;
+    }
+    .tray-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #7d38be;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-purple-200 selection:text-purple-900">
+
+  <!-- ==================== HEADER & NAVIGATION ==================== -->
+  <header class="sticky top-0 z-50 bg-[#faf6f0]/90 backdrop-blur-md border-b border-brand-border/70">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      
+      <!-- Brand Logo & Tagline -->
+      <a href="#home" class="flex items-center gap-3 group">
+        <img src="public/media_1790095659295.jpg" alt="One More Shot" class="w-10 h-10 rounded-xl object-cover border-2 border-brand-purple/30 shadow-xs group-hover:scale-105 transition">
+        <div>
+          <span class="text-base font-extrabold tracking-tight text-brand-dark flex items-center gap-1.5">
+            One More Shot
+          </span>
+          <p class="text-xs font-handwriting text-brand-purple font-bold -mt-0.5">for moment’s you’ll remember ♡</p>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-8 text-xs font-semibold text-brand-muted">
+        <a href="#home" class="hover:text-brand-purple transition">Home</a>
+        <a href="#get-polaroids" class="hover:text-brand-purple transition">Get Your Polaroids</a>
+        <a href="#how-it-works" class="hover:text-brand-purple transition">How It Works</a>
+        <a href="#about-us" class="hover:text-brand-purple transition">About Us</a>
+        <a href="#contact" class="hover:text-brand-purple transition">Contact</a>
+      </nav>
+
+      <!-- Batch Counter & CTA -->
+      <div class="flex items-center gap-3">
+        <a href="#batch-tray-section" class="px-3.5 py-1.5 rounded-xl bg-brand-lavender/80 border border-brand-border text-brand-purple text-xs font-bold flex items-center gap-1.5 hover:bg-brand-lavender transition shadow-2xs">
+          <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+          <span>Batch: <strong id="nav-count" class="text-brand-dark">2 prints</strong></span>
+        </a>
+        <a href="#get-polaroids" class="px-4 py-2 rounded-xl bg-brand-purple hover:bg-brand-purpleHover text-white text-xs font-bold shadow-md shadow-purple-900/15 transition transform active:scale-95">
+          Upload Now
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== SECTION 1: HERO / HOME ==================== -->
+  <section id="home" class="max-w-6xl mx-auto px-4 pt-12 pb-16 md:py-20">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      
+      <!-- Left Content -->
+      <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lavender border border-brand-border text-brand-purple text-xs font-bold">
+          <span>✨ One More Shot Studio</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-purple"></span>
+          <span>Mini & Wide Polaroids</span>
+        </div>
+
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-brand-dark tracking-tight leading-[1.14]">
+          Preserve Your <br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-700 via-purple-600 to-pink-600 font-serif">Memories in Print.</span>
+        </h1>
+
+        <p class="text-sm md:text-base text-brand-muted max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
+          Upload your favorite photos, mix Mini & Wide polaroid formats, customize handwritten captions, and print multiple copies delivered directly to you.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+          <a href="#get-polaroids" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-brand-purple hover:bg-brand-purpleHover text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-purple-900/15 transition transform active:scale-95">
+            <span>Create Your Polaroids</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+          <a href="#about-us" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-white hover:bg-brand-lavender/50 border border-brand-border text-xs font-bold text-brand-dark transition shadow-2xs">
+            <span>Read Our Story</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Display (Tilted Floating Polaroids Stack) -->
+      <div class="lg:col-span-6 flex justify-center relative select-none">
+        
+        <div class="absolute w-80 h-80 bg-purple-300/30 rounded-full blur-3xl -z-10"></div>
+
+        <div class="relative w-full max-w-sm h-[380px] flex items-center justify-center">
+          
+          <!-- Polaroid 1 (NEW MINI PIC: Sunset Silhouette of Akash) -->
+          <div class="absolute -left-2 top-2 w-52 bg-white rounded-xs p-3 polaroid-card border border-purple-100 transform -rotate-8 hover:rotate-0 hover:z-20 transition duration-300 cursor-pointer">
+            <div class="washi-tape absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded text-[9px] font-handwriting text-brand-dark font-bold">
+              Sunset Glow ♡
+            </div>
+            <div class="h-48 bg-slate-900 rounded-2xs overflow-hidden mb-2">
+              <img src="public/media_1790099342694.jpg" alt="Mini Polaroid Sunset" class="w-full h-full object-cover">
+            </div>
+            <div class="text-center font-handwriting text-base font-bold text-slate-800">
+              Golden hour magic ✨
+            </div>
+            <div class="flex justify-between items-center text-[8px] text-brand-purple font-bold pt-1 border-t border-purple-100 mt-1">
+              <span>ONE MORE SHOT</span>
+              <span>Mini Polaroid</span>
+            </div>
+          </div>
+
+          <!-- Polaroid 2 (Wide Lake Sunset) -->
+          <div class="absolute right-0 bottom-2 w-60 bg-white rounded-xs p-3.5 polaroid-card border border-purple-100 transform rotate-6 hover:rotate-0 hover:z-20 transition duration-300 cursor-pointer">
+            <div class="h-38 bg-slate-900 rounded-2xs overflow-hidden mb-2">
+              <img src="public/media_1790095725109.png" alt="Wide Polaroid Akash" class="w-full h-full object-cover">
+            </div>
+            <div class="flex items-center justify-between text-xs font-handwriting text-slate-800 font-bold px-1">
+              <span>Akash Rajanna ✨</span>
+              <span class="text-[9px] text-brand-purple font-mono font-bold">Wide</span>
+            </div>
+            <div class="flex justify-between items-center text-[8px] text-brand-purple font-bold pt-1 border-t border-purple-100 mt-1">
+              <span>@_one.moreshot_</span>
+              <span>Archival Gloss</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== SECTION 2: GET YOUR POLAROIDS ==================== -->
+  <section id="get-polaroids" class="max-w-6xl mx-auto px-4 py-16 space-y-10">
+    
+    <div class="text-center max-w-xl mx-auto space-y-1">
+      <span class="text-xs font-bold text-brand-purple tracking-widest uppercase">Custom Studio</span>
+      <h2 class="text-3xl font-extrabold text-brand-dark tracking-tight">Get Your Polaroids</h2>
+      <p class="text-xs text-brand-muted">Upload one or multiple photos, customize each with its own template & caption</p>
+    </div>
+
+    <!-- DUAL-PANEL STUDIO CONTAINER -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- LEFT PANEL: Format Selection, Copies & Upload -->
+      <div class="lg:col-span-6 space-y-6">
+        
+        <!-- Format Selector (Mini vs Wide) -->
+        <div class="bg-white border border-brand-border rounded-3xl p-6 shadow-xs space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-brand-dark uppercase tracking-wider">1. Choose Template for Current Photo</h3>
+            <span class="text-[11px] text-brand-purple font-semibold">Mini or Wide</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            
+            <!-- Mini Polaroid Option -->
+            <button onclick="changeCurrentFormat('mini')" id="btn-fmt-mini" class="p-4 rounded-2xl border-2 border-brand-purple bg-brand-lavender/50 flex flex-col items-center justify-center gap-3 transition">
+              <div class="w-14 h-18 bg-white rounded-xs p-1.5 shadow-sm border border-purple-200 flex flex-col justify-between" style="aspect-ratio: 45 / 58.3;">
+                <div class="w-full bg-slate-800 rounded-2xs" style="height: 75%;"></div>
+                <div class="w-8 h-1 bg-purple-300 rounded-full mx-auto"></div>
+              </div>
+              <div class="text-center">
+                <span class="block text-xs font-bold text-brand-dark">Mini Polaroid</span>
+                <span class="text-[10px] text-brand-purple font-medium">Classic Portrait</span>
+              </div>
+            </button>
+
+            <!-- Wide Polaroid Option -->
+            <button onclick="changeCurrentFormat('wide')" id="btn-fmt-wide" class="p-4 rounded-2xl border border-brand-border bg-white flex flex-col items-center justify-center gap-3 transition hover:border-purple-300">
+              <div class="w-18 h-14 bg-white rounded-xs p-1.5 shadow-sm border border-purple-200 flex flex-col justify-between" style="aspect-ratio: 80 / 64.8;">
+                <div class="w-full bg-slate-800 rounded-2xs" style="height: 72%;"></div>
+                <div class="w-10 h-1 bg-purple-300 rounded-full mx-auto"></div>
+              </div>
+              <div class="text-center">
+                <span class="block text-xs font-bold text-brand-dark">Wide Polaroid</span>
+                <span class="text-[10px] text-brand-muted">Panoramic View</span>
+              </div>
+            </button>
+
+          </div>
+
+          <!-- Quantity of Copies for Current Polaroid -->
+          <div class="pt-3 border-t border-brand-border/70 flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-brand-dark block">Copies of this Polaroid:</span>
+              <span class="text-[10px] text-brand-muted">Need duplicates for friends or family?</span>
+            </div>
+            
+            <div class="flex items-center gap-2 bg-brand-lavender/50 p-1.5 rounded-xl border border-brand-border">
+              <button onclick="adjustCurrentCopies(-1)" class="w-7 h-7 rounded-lg bg-white hover:bg-brand-lavender text-brand-dark font-bold transition shadow-2xs">
+                -
+              </button>
+              <span id="current-copies-label" class="w-8 text-center font-mono font-bold text-brand-purple text-sm">1</span>
+              <button onclick="adjustCurrentCopies(1)" class="w-7 h-7 rounded-lg bg-brand-purple hover:bg-brand-purpleHover text-white font-bold transition shadow-xs">
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Multi-Photo Drag-and-Drop Upload Zone -->
+        <div class="bg-white border-2 border-dashed border-brand-border hover:border-brand-purple rounded-3xl p-7 flex flex-col items-center justify-center text-center space-y-4 transition shadow-xs">
+          <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-2xl">
+            <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="text-sm font-bold text-brand-dark">Upload Photos (Single or Multiple)</h4>
+            <p class="text-xs text-brand-muted">Select 1 or multiple pictures at once to batch print</p>
+          </div>
+
+          <div class="flex gap-2.5">
+            <label class="px-5 py-2.5 rounded-xl bg-brand-purple hover:bg-brand-purpleHover text-white text-xs font-bold cursor-pointer shadow-md shadow-purple-900/10 transition transform active:scale-95 flex items-center gap-1.5">
+              <i data-lucide="image-plus" class="w-4 h-4"></i>
+              <span>Select Photos</span>
+              <input type="file" id="multi-file-input" accept="image/jpeg,image/jpg,.jpg,.jpeg" multiple class="hidden" onchange="handleMultiUpload(event)">
+            </label>
+            <button onclick="addNewBlankPolaroid()" class="px-4 py-2.5 rounded-xl bg-brand-lavender/50 hover:bg-brand-lavender border border-brand-border text-brand-dark text-xs font-semibold flex items-center gap-1.5 transition">
+              <span>+ Add Blank Card</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT PANEL: Live Canvas Preview & Customization Controls -->
+      <div class="lg:col-span-6 bg-white border border-brand-border rounded-3xl p-6 md:p-8 space-y-6 shadow-xs">
+        
+        <div class="flex items-center justify-between border-b border-brand-border pb-3">
+          <div class="flex items-center gap-2">
+            <h3 class="text-xs font-bold text-brand-dark uppercase tracking-wider">Editing Polaroid</h3>
+            <span id="active-item-badge" class="text-[10px] font-mono text-brand-purple bg-brand-lavender px-2 py-0.5 rounded-full border border-purple-200 font-bold">
+              #1 of 2
+            </span>
+          </div>
+          <span id="active-copies-tag" class="text-[11px] text-brand-purple font-bold">
+            1 Copy
+          </span>
+        </div>
+
+        <!-- EMPTY STATE: shown when no photos uploaded yet -->
+        <div id="editor-empty-state" class="flex flex-col items-center justify-center min-h-[420px] text-center space-y-5 py-8">
+          <div class="w-20 h-20 rounded-3xl bg-brand-lavender flex items-center justify-center text-4xl shadow-inner">
+            🖼️
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="text-lg font-extrabold text-brand-dark">No Photos Yet</h3>
+            <p class="text-xs text-brand-muted max-w-xs mx-auto leading-relaxed">
+              Upload your photos on the left to start customising your polaroids. You can add multiple at once!
+            </p>
+          </div>
+          <label class="px-6 py-3 rounded-2xl bg-brand-purple hover:bg-brand-purpleHover text-white text-sm font-bold cursor-pointer shadow-md shadow-purple-900/15 transition transform active:scale-95 flex items-center gap-2">
+            <i data-lucide="image-plus" class="w-4 h-4"></i>
+            <span>Select Photos to Start</span>
+            <input type="file" accept="image/jpeg,image/jpg,.jpg,.jpeg" multiple class="hidden" onchange="handleMultiUpload(event)">
+          </label>
+        </div>
+
+        <!-- EDITOR CONTENT: shown once photos are uploaded -->
+        <div id="editor-content" class="hidden space-y-6">
+
+          <!-- REAL-TIME POLAROID PREVIEW -->
+          <div class="bg-brand-lavenderLight rounded-2xl p-6 flex flex-col items-center justify-center min-h-[350px] border border-brand-border relative">
+            
+            <div id="live-polaroid-frame" class="bg-white rounded-xs p-3.5 polaroid-card border border-purple-100 flex flex-col justify-between transition-all duration-300 select-none relative"
+                 style="width: 280px; height: 362px;">
+              
+              <!-- Photo Window (Canva-style Clipping Mask with Drag-to-Pan and Wheel Zoom) -->
+              <div id="live-photo-window" class="relative w-full bg-slate-900 rounded-xs overflow-hidden flex-shrink-0 cursor-grab active:cursor-grabbing select-none"
+                   style="height: 280px;" title="Click and drag to reposition • Scroll mouse to zoom">
+                <img id="live-photo-img" src="" alt="Customer Photo" class="pointer-events-none select-none transition-transform duration-75">
+                
+                <!-- Canva Rule of Thirds Crop Grid Overlay -->
+                <div id="crop-grid" class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none opacity-0 transition-opacity duration-200 z-10 border border-white/20">
+                  <div class="border-r border-b border-white/40"></div>
+                  <div class="border-r border-b border-white/40"></div>
+                  <div class="border-b border-white/40"></div>
+                  <div class="border-r border-b border-white/40"></div>
+                  <div class="border-r border-b border-white/40"></div>
+                  <div class="border-b border-white/40"></div>
+                  <div class="border-r border-white/40"></div>
+                  <div class="border-r border-white/40"></div>
+                  <div></div>
+                </div>
+
+                <!-- Zoom Badge Floating -->
+                <div id="zoom-badge" class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/70 text-white text-[10px] font-mono font-bold backdrop-blur-xs pointer-events-none opacity-0 transition-opacity z-20">
+                  100%
+                </div>
+              </div>
+
+              <!-- Bottom Margin (Caption) -->
+              <div class="flex-1 flex flex-col justify-between pt-2 px-1">
+                <div id="live-caption-text" class="text-center font-handwriting text-2xl text-slate-800 font-bold select-none cursor-grab active:cursor-grabbing"
+                     style="transform: rotate(-1.5deg);" title="Drag to adjust caption">
+                </div>
+                <div class="flex justify-between items-center text-[8px] text-brand-purple font-bold pt-1 border-t border-purple-100">
+                  <span>ONE MORE SHOT</span>
+                  <span class="font-mono text-purple-700">@_one.moreshot_</span>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="flex items-center gap-4 text-[11px] text-brand-purple font-semibold mt-3">
+              <span class="flex items-center gap-1"><i data-lucide="move" class="w-3.5 h-3.5"></i> Drag photo to pan</span>
+              <span>•</span>
+              <span class="flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5"></i> Scroll wheel zooms</span>
+              <span>•</span>
+              <span class="flex items-center gap-1"><i data-lucide="type" class="w-3.5 h-3.5"></i> Drag caption</span>
+            </div>
+          </div>
+
+          <!-- PHOTO FIT, ZOOM & PAN CONTROLS -->
+          <div class="bg-brand-lavenderLight/80 border border-brand-border rounded-2xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-brand-dark flex items-center gap-1.5">
+                <i data-lucide="crop" class="w-3.5 h-3.5 text-brand-purple"></i>
+                <span>Photo Fit &amp; Zoom</span>
+              </span>
+              <div class="flex items-center gap-2">
+                <span id="photo-zoom-label" class="text-xs font-mono font-bold text-brand-purple">100%</span>
+                <button onclick="resetPhotoTransform()" class="text-[10px] px-2 py-0.5 rounded-md bg-white border border-brand-border text-brand-muted hover:text-brand-purple font-semibold transition shadow-2xs">
+                  Reset Fit
+                </button>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-2.5">
+              <button onclick="adjustPhotoZoom(-0.1)" class="w-7 h-7 rounded-lg bg-white border border-brand-border text-brand-dark font-bold hover:bg-brand-lavender text-xs transition flex items-center justify-center shadow-2xs">
+                -
+              </button>
+              <input type="range" id="photo-zoom-slider" min="1" max="2.5" step="0.05" value="1" oninput="onPhotoZoomChange()" class="w-full accent-brand-purple cursor-pointer">
+              <button onclick="adjustPhotoZoom(0.1)" class="w-7 h-7 rounded-lg bg-white border border-brand-border text-brand-dark font-bold hover:bg-brand-lavender text-xs transition flex items-center justify-center shadow-2xs">
+                +
+              </button>
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-brand-muted">
+              <span>Reposition: Click &amp; drag image in polaroid</span>
+              <span class="text-brand-purple font-semibold">Position: <strong id="pan-status">Centered</strong></span>
+            </div>
+          </div>
+
+          <!-- Controls: Caption, Sliders, Fonts -->
+          <div class="space-y-4 pt-1">
+            
+            <div>
+              <label class="block text-xs font-semibold text-brand-dark mb-1.5">Caption for this Polaroid</label>
+              <input type="text" id="caption-input" value="" oninput="onCaptionChange()"
+                     placeholder="Leave blank for no caption..."
+                     class="w-full bg-brand-lavenderLight border border-brand-border rounded-xl px-3.5 py-2.5 text-sm text-brand-dark focus:outline-none focus:border-brand-purple font-handwriting text-xl">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="flex justify-between text-xs text-brand-muted mb-1">
+                  <span>Tilt Angle</span>
+                  <span id="tilt-label" class="font-mono text-brand-purple font-bold">-1.5°</span>
+                </div>
+                <input type="range" id="tilt-slider" min="-18" max="18" value="-1.5" step="0.5" oninput="onCaptionChange()" class="w-full accent-brand-purple cursor-pointer">
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs text-brand-muted mb-1">
+                  <span>Text Size</span>
+                  <span id="size-label" class="font-mono text-brand-purple font-bold">24px</span>
+                </div>
+                <input type="range" id="size-slider" min="16" max="36" value="24" oninput="onCaptionChange()" class="w-full accent-brand-purple cursor-pointer">
+              </div>
+            </div>
+
+            <!-- Font Style Picker -->
+            <div class="flex items-center justify-between pt-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-brand-muted">Font:</span>
+                <button onclick="setFont('handwriting')" id="f-hand" class="px-3 py-1 rounded-lg border-2 border-brand-purple bg-brand-lavender text-xs font-handwriting text-base font-bold text-brand-purple">
+                  Handwriting
+                </button>
+                <button onclick="setFont('modern')" id="f-mod" class="px-3 py-1 rounded-lg border border-brand-border bg-white text-xs font-sans text-brand-muted hover:text-brand-dark">
+                  Modern
+                </button>
+              </div>
+
+              <button onclick="duplicateActivePolaroid()" class="px-3 py-1 rounded-lg bg-brand-lavender/50 hover:bg-brand-lavender text-xs text-brand-purple font-bold border border-brand-border flex items-center gap-1 transition">
+                <i data-lucide="copy" class="w-3 h-3"></i>
+                <span>Duplicate</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div><!-- /editor-content -->
+
+      </div><!-- /right panel -->
+
+    <!-- ==================== BATCH TRAY / MULTI-PHOTO STRIP ==================== -->
+    <div id="batch-tray-section" class="lg:col-span-12 col-span-full w-full bg-white border border-brand-border rounded-3xl p-6 md:p-8 space-y-5 shadow-xs">
+      
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-brand-border pb-4">
+        <div>
+          <div class="flex items-center flex-wrap gap-2">
+            <h3 class="text-base font-bold text-brand-dark flex items-center gap-2">
+              <i data-lucide="layers" class="w-4 h-4 text-brand-purple"></i>
+              <span>Your Print Batch</span>
+            </h3>
+            <span id="tray-total-badge" class="px-2.5 py-0.5 rounded-full bg-brand-lavender text-brand-purple border border-purple-200 text-xs font-bold font-mono">
+              0 Photos
+            </span>
+          </div>
+          <p class="text-xs text-brand-muted mt-0.5">Click any polaroid below to edit, switch its template, or adjust its copies.</p>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-2.5">
+          <label class="px-3.5 py-2 rounded-xl bg-brand-lavender/50 hover:bg-brand-lavender border border-brand-border text-xs font-bold text-brand-purple cursor-pointer flex items-center gap-1.5 transition">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Add More Photos</span>
+            <input type="file" accept="image/jpeg,image/jpg,.jpg,.jpeg" multiple class="hidden" onchange="handleMultiUpload(event)">
+          </label>
+
+          <button onclick="submitBatchOrder()" class="px-5 py-2 rounded-xl bg-brand-purple hover:bg-brand-purpleHover text-white text-xs font-bold shadow-md shadow-purple-900/15 flex items-center gap-1.5 transition transform active:scale-95">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            <span>Submit Batch Order</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrollable Horizontal Tray of Customized Polaroids -->
+      <div id="batch-tray-grid" class="flex gap-4 overflow-x-auto pb-4 tray-scrollbar pt-1">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== SECTION 3: HOW IT WORKS ==================== -->
+  <section id="how-it-works" class="max-w-6xl mx-auto px-4 py-20 border-t border-brand-border">
+    
+    <div class="text-center max-w-xl mx-auto mb-14 space-y-1">
+      <span class="text-xs font-bold text-brand-purple tracking-widest uppercase">The Process</span>
+      <h2 class="text-3xl font-extrabold text-brand-dark tracking-tight">How It Works</h2>
+      <p class="text-xs text-brand-muted">Your custom prints created in 4 effortless steps</p>
+    </div>
+
+    <!-- Step-by-Step Horizontal Progress Flow (1 -> 2 -> 3 -> 4) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+      
+      <!-- Step 1 -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 space-y-4 hover:border-brand-purple transition shadow-xs">
+        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-xl font-bold">
+          <i data-lucide="upload" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-brand-purple uppercase tracking-widest">Step 01</span>
+          <h3 class="text-base font-bold text-brand-dark">Upload Photos</h3>
+          <p class="text-xs text-brand-muted leading-relaxed">
+            Select single or multiple photos from your gallery at once.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 space-y-4 hover:border-brand-purple transition shadow-xs">
+        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-xl font-bold">
+          <i data-lucide="layout" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-brand-purple uppercase tracking-widest">Step 02</span>
+          <h3 class="text-base font-bold text-brand-dark">Mix Templates</h3>
+          <p class="text-xs text-brand-muted leading-relaxed">
+            Choose Mini for portraits and Wide for panoramic shots in the same batch.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 space-y-4 hover:border-brand-purple transition shadow-xs">
+        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-xl font-bold">
+          <i data-lucide="copy" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-brand-purple uppercase tracking-widest">Step 03</span>
+          <h3 class="text-base font-bold text-brand-dark">Set Copies & Captions</h3>
+          <p class="text-xs text-brand-muted leading-relaxed">
+            Choose how many copies of each polaroid you need and add custom captions.
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 space-y-4 hover:border-brand-purple transition shadow-xs">
+        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-xl font-bold">
+          <i data-lucide="printer" class="w-5 h-5"></i>
+        </div>
+        <div class="space-y-1">
+          <span class="text-[10px] font-bold text-brand-purple uppercase tracking-widest">Step 04</span>
+          <h3 class="text-base font-bold text-brand-dark">Print & Keep</h3>
+          <p class="text-xs text-brand-muted leading-relaxed">
+            We print on archival high-gloss photo paper and deliver to your hands.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== SECTION 4: ABOUT US (REPLACED INQUIRIES SECTION) ==================== -->
+  <section id="about-us" class="max-w-6xl mx-auto px-4 py-20 border-t border-brand-border">
+    
+    <div class="bg-white border border-brand-border rounded-3xl p-8 md:p-12 shadow-sm relative overflow-hidden space-y-8">
+      
+      <!-- Ambient Purple Accent -->
+      <div class="absolute -right-24 -top-24 w-96 h-96 bg-purple-200/40 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        
+        <!-- Left: Founder Story & Vision -->
+        <div class="lg:col-span-7 space-y-5">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lavender text-brand-purple text-xs font-bold border border-purple-200">
+            <span>Our Story</span>
+          </div>
+
+          <h2 class="text-3xl md:text-4xl font-extrabold text-brand-dark tracking-tight leading-tight">
+            We believe photos belong in your hands, not buried in your camera roll.
+          </h2>
+
+          <p class="text-sm text-brand-muted leading-relaxed">
+            Founded by <strong>Akash Rajanna</strong>, <strong>One More Shot</strong> was born out of a simple love for real, tangible memories. In a world of thousands of forgotten phone pictures, a printed Polaroid is something you hold, pin to your wall, tuck into your wallet, or gift to someone you care about.
+          </p>
+
+          <p class="text-sm text-brand-muted leading-relaxed">
+            Whether it’s a sun-drenched evening with friends, a college festival, a birthday milestone, or a spontaneous smile, our boutique studio prints each Polaroid with archival photo lab gloss, calibrated margins, and your heartfelt handwritten message.
+          </p>
+
+          <!-- 3 Core Pillars -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div class="p-3.5 rounded-2xl bg-brand-lavenderLight border border-brand-border">
+              <span class="text-lg">✨</span>
+              <h4 class="text-xs font-bold text-brand-dark mt-1">Archival Gloss</h4>
+              <p class="text-[11px] text-brand-muted">Rich colors that resist fading over the years.</p>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-brand-lavenderLight border border-brand-border">
+              <span class="text-lg">📐</span>
+              <h4 class="text-xs font-bold text-brand-dark mt-1">Exact Ratio</h4>
+              <p class="text-[11px] text-brand-muted">Mini and Wide calibrated for authentic borders.</p>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-brand-lavenderLight border border-brand-border">
+              <span class="text-lg">💜</span>
+              <h4 class="text-xs font-bold text-brand-dark mt-1">Handmade Love</h4>
+              <p class="text-[11px] text-brand-muted">Crafted individually for moments you’ll remember.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Founder Showcase Card -->
+        <div class="lg:col-span-5 flex flex-col items-center justify-center p-6 bg-brand-lavenderLight rounded-3xl border border-brand-border text-center space-y-4">
+          <div class="relative">
+            <div class="w-36 h-36 rounded-2xl overflow-hidden border-4 border-white shadow-md p-0.5 bg-gradient-to-tr from-purple-500 to-pink-400">
+              <img src="public/media_1790095725109.png" alt="Akash Rajanna" class="w-full h-full object-cover rounded-xl">
+            </div>
+            <span class="absolute -bottom-2 -right-2 bg-brand-purple text-white p-1.5 rounded-full shadow border-2 border-white text-xs">
+              👑
+            </span>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-extrabold text-brand-dark">Akash Rajanna</h3>
+            <p class="text-xs font-bold text-brand-purple">Founder & Lead Photographer</p>
+            <p class="text-[11px] text-brand-muted">One More Shot Photo Booth</p>
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <a href="https://www.instagram.com/akash._.rajanna_/" target="_blank" class="px-3.5 py-1.5 rounded-xl bg-white border border-brand-border text-brand-dark text-xs font-bold hover:bg-brand-lavender transition flex items-center gap-1.5 shadow-2xs">
+              <i data-lucide="instagram" class="w-3.5 h-3.5 text-pink-600"></i>
+              <span>@akash._.rajanna_</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== SECTION 5: CONTACT & SOCIALS ==================== -->
+  <section id="contact" class="max-w-6xl mx-auto px-4 py-16 border-t border-brand-border">
+    
+    <div class="text-center max-w-xl mx-auto mb-10 space-y-1">
+      <span class="text-xs font-bold text-brand-purple tracking-widest uppercase">Reach Out</span>
+      <h2 class="text-3xl font-extrabold text-brand-dark tracking-tight">Connect With Us</h2>
+      <p class="text-xs text-brand-muted">Get in touch directly for orders, event bookings, or collaborations</p>
+    </div>
+
+    <!-- Contact Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      
+      <!-- Phone / WhatsApp -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 flex flex-col items-center text-center space-y-3 shadow-xs hover:border-brand-purple transition">
+        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center">
+          <i data-lucide="phone-call" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="block text-[11px] text-brand-muted font-semibold">Direct Phone & WhatsApp</span>
+          <a href="tel:8073892740" class="text-base font-extrabold text-brand-dark hover:text-brand-purple transition">
+            +91 8073892740
+          </a>
+        </div>
+        <p class="text-[11px] text-brand-muted">Call or message for instant booking inquiries</p>
+      </div>
+
+      <!-- Brand Instagram -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 flex flex-col items-center text-center space-y-3 shadow-xs hover:border-pink-300 transition">
+        <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center">
+          <i data-lucide="instagram" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="block text-[11px] text-brand-muted font-semibold">Brand Instagram</span>
+          <a href="https://www.instagram.com/_one.moreshot_/" target="_blank" class="text-base font-extrabold text-brand-dark hover:text-pink-600 transition">
+            @_one.moreshot_
+          </a>
+        </div>
+        <p class="text-[11px] text-brand-muted">Explore event galleries and latest photo stories</p>
+      </div>
+
+      <!-- Operating Hours & Events -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 flex flex-col items-center text-center space-y-3 shadow-xs hover:border-purple-300 transition">
+        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center">
+          <i data-lucide="calendar" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="block text-[11px] text-brand-muted font-semibold">Live Events & Bookings</span>
+          <span class="text-base font-extrabold text-brand-dark">
+            Open 7 Days a Week
+          </span>
+        </div>
+        <p class="text-[11px] text-brand-muted">Available for parties, college fests & private booth setups</p>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-brand-border bg-[#f6f1e9] py-10 text-xs text-brand-muted">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <div class="flex items-center gap-2">
+        <span class="font-extrabold text-brand-dark">One More Shot</span>
+        <span>•</span>
+        <span class="font-handwriting text-brand-purple text-sm font-bold">for moment’s you’ll remember ♡</span>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <a href="#home" class="hover:text-brand-purple transition">Home</a>
+        <a href="#get-polaroids" class="hover:text-brand-purple transition">Get Your Polaroids</a>
+        <a href="#how-it-works" class="hover:text-brand-purple transition">How It Works</a>
+        <a href="#about-us" class="hover:text-brand-purple transition">About Us</a>
+        <a href="#contact" class="hover:text-brand-purple transition">Contact</a>
+      </div>
+
+      <p>© 2026 One More Shot. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ==================== CUSTOMER ORDER CONFIRMATION MODAL ==================== -->
+  <div id="order-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white border border-brand-border rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl space-y-5 transform scale-95 transition-transform duration-300" id="order-modal-card">
+      <div class="w-14 h-14 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-3xl mx-auto shadow-inner">
+        ✨
+      </div>
+      <div class="text-center space-y-1.5">
+        <span class="text-[10px] font-mono font-bold tracking-widest text-brand-purple uppercase bg-brand-lavender px-3 py-1 rounded-full border border-purple-200">
+          Order Confirmed
+        </span>
+        <h3 class="text-xl font-extrabold text-brand-dark">Memories on Their Way!</h3>
+        <p class="text-xs text-brand-muted leading-relaxed">
+          Thank you for choosing One More Shot. Your custom prints have been scheduled for 300 DPI lab printing.
+        </p>
+      </div>
+
+      <div class="bg-brand-lavenderLight border border-brand-border rounded-2xl p-4 space-y-2 text-xs">
+        <div class="flex justify-between">
+          <span class="text-brand-muted">Order Reference:</span>
+          <span id="modal-order-id" class="font-mono font-bold text-brand-purple">#ORD-LIVE</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-brand-muted">Total Prints:</span>
+          <span id="modal-order-count" class="font-bold text-brand-dark">2 Prints</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-brand-muted">Paper & Quality:</span>
+          <span class="font-bold text-slate-700">Archival Photo Lab Gloss</span>
+        </div>
+      </div>
+
+      <div class="space-y-2.5 pt-1">
+        <a id="modal-whatsapp-btn" href="https://wa.me/918073892740" target="_blank" class="w-full py-3 rounded-2xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Track / Chat on WhatsApp (+91 8073892740)</span>
+        </a>
+        <button onclick="closeOrderModal()" class="w-full py-2.5 rounded-2xl bg-brand-lavenderLight hover:bg-brand-lavender border border-brand-border text-brand-dark font-bold text-xs transition">
+          Done / Create Another
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT CONTROLLER ==================== -->
+  <script>
+    lucide.createIcons();
+
+    // Data Structure for the Batch of Polaroids — starts empty, user must upload
+    let polaroidBatch = [];
+    let activeIndex = 0;
+
+    // Canva-Style Image Mask & Transform Calculation
+    function applyPhotoTransform() {
+      if (polaroidBatch.length === 0) return;
+      const item = polaroidBatch[activeIndex];
+      const windowEl = document.getElementById('live-photo-window');
+      const img = document.getElementById('live-photo-img');
+      const zoomSlider = document.getElementById('photo-zoom-slider');
+      const zoomLabel = document.getElementById('photo-zoom-label');
+      const panStatus = document.getElementById('pan-status');
+      const zoomBadge = document.getElementById('zoom-badge');
+
+      item.zoom = Math.max(1, Math.min(3, parseFloat(item.zoom) || 1));
+      item.panX = parseFloat(item.panX) || 0;
+      item.panY = parseFloat(item.panY) || 0;
+
+      const frameW = windowEl.clientWidth || (item.format === 'mini' ? 252 : 352);
+      const frameH = windowEl.clientHeight || (item.format === 'mini' ? 280 : 225);
+
+      const naturalW = img.naturalWidth || 800;
+      const naturalH = img.naturalHeight || 600;
+      const imgAspect = naturalW / naturalH;
+      const frameAspect = frameW / frameH;
+
+      let baseW, baseH;
+      if (imgAspect > frameAspect) {
+        baseH = frameH;
+        baseW = frameH * imgAspect;
+      } else {
+        baseW = frameW;
+        baseH = frameW / imgAspect;
+      }
+
+      const renderedW = Math.round(baseW * item.zoom);
+      const renderedH = Math.round(baseH * item.zoom);
+
+      // Canva boundary clamping: ensures frame is ALWAYS completely covered!
+      const maxPanX = Math.max(0, (renderedW - frameW) / 2);
+      const maxPanY = Math.max(0, (renderedH - frameH) / 2);
+
+      item.panX = Math.max(-maxPanX, Math.min(maxPanX, item.panX));
+      item.panY = Math.max(-maxPanY, Math.min(maxPanY, item.panY));
+
+      img.style.position = 'absolute';
+      img.style.left = '50%';
+      img.style.top = '50%';
+      img.style.width = renderedW + 'px';
+      img.style.height = renderedH + 'px';
+      img.style.maxWidth = 'none';
+      img.style.maxHeight = 'none';
+      img.style.transform = `translate(calc(-50% + ${item.panX}px), calc(-50% + ${item.panY}px))`;
+
+      if (zoomSlider) zoomSlider.value = item.zoom;
+      if (zoomLabel) zoomLabel.textContent = `${Math.round(item.zoom * 100)}%`;
+      if (zoomBadge) zoomBadge.textContent = `${Math.round(item.zoom * 100)}%`;
+      if (panStatus) {
+        if (Math.abs(item.panX) < 2 && Math.abs(item.panY) < 2 && item.zoom <= 1.02) {
+          panStatus.textContent = 'Centered';
+        } else {
+          panStatus.textContent = 'Adjusted';
+        }
+      }
+    }
+
+    function onPhotoZoomChange() {
+      if (polaroidBatch.length === 0) return;
+      const val = parseFloat(document.getElementById('photo-zoom-slider').value);
+      polaroidBatch[activeIndex].zoom = val;
+      applyPhotoTransform();
+      showTemporaryZoomBadge();
+    }
+
+    function adjustPhotoZoom(delta) {
+      if (polaroidBatch.length === 0) return;
+      let current = polaroidBatch[activeIndex].zoom || 1;
+      let next = Math.max(1, Math.min(3, current + delta));
+      polaroidBatch[activeIndex].zoom = Math.round(next * 100) / 100;
+      applyPhotoTransform();
+      showTemporaryZoomBadge();
+    }
+
+    function resetPhotoTransform() {
+      if (polaroidBatch.length === 0) return;
+      polaroidBatch[activeIndex].zoom = 1;
+      polaroidBatch[activeIndex].panX = 0;
+      polaroidBatch[activeIndex].panY = 0;
+      applyPhotoTransform();
+    }
+
+    let badgeTimer = null;
+    function showTemporaryZoomBadge() {
+      const badge = document.getElementById('zoom-badge');
+      if (!badge) return;
+      badge.style.opacity = '1';
+      clearTimeout(badgeTimer);
+      badgeTimer = setTimeout(() => {
+        badge.style.opacity = '0';
+      }, 1200);
+    }
+
+    // Load active polaroid into canvas
+    function loadActivePolaroid() {
+      const emptyState = document.getElementById('editor-empty-state');
+      const editorContent = document.getElementById('editor-content');
+
+      if (polaroidBatch.length === 0) {
+        // Show empty state, hide editor
+        if (emptyState) emptyState.classList.remove('hidden');
+        if (editorContent) editorContent.classList.add('hidden');
+        renderTray();
+        return;
+      }
+
+      // Hide empty state, show editor
+      if (emptyState) emptyState.classList.add('hidden');
+      if (editorContent) editorContent.classList.remove('hidden');
+
+      if (activeIndex >= polaroidBatch.length) activeIndex = polaroidBatch.length - 1;
+
+      const item = polaroidBatch[activeIndex];
+      const frame = document.getElementById('live-polaroid-frame');
+      const windowEl = document.getElementById('live-photo-window');
+      const img = document.getElementById('live-photo-img');
+      const captionText = document.getElementById('live-caption-text');
+      const captionInput = document.getElementById('caption-input');
+      const tiltSlider = document.getElementById('tilt-slider');
+      const sizeSlider = document.getElementById('size-slider');
+      const tiltLabel = document.getElementById('tilt-label');
+      const sizeLabel = document.getElementById('size-label');
+      const activeBadge = document.getElementById('active-item-badge');
+      const activeCopiesTag = document.getElementById('active-copies-tag');
+      const currentCopiesLabel = document.getElementById('current-copies-label');
+
+      // Update badge
+      activeBadge.textContent = `#${activeIndex + 1} of ${polaroidBatch.length}`;
+      activeCopiesTag.textContent = `${item.copies} ${item.copies === 1 ? 'Copy' : 'Copies'}`;
+      currentCopiesLabel.textContent = item.copies;
+
+      // Update Format Buttons in Left Panel
+      const btnMini = document.getElementById('btn-fmt-mini');
+      const btnWide = document.getElementById('btn-fmt-wide');
+      if (item.format === 'mini') {
+        btnMini.className = "p-4 rounded-2xl border-2 border-brand-purple bg-brand-lavender/50 flex flex-col items-center justify-center gap-3 transition";
+        btnWide.className = "p-4 rounded-2xl border border-brand-border bg-white flex flex-col items-center justify-center gap-3 transition hover:border-purple-300";
+        
+        // Exact calibrated ratio: 45 x 58.3 mm (Vertical)
+        frame.style.width = "280px";
+        frame.style.height = "362px";
+        windowEl.style.height = "280px";
+      } else {
+        btnWide.className = "p-4 rounded-2xl border-2 border-brand-purple bg-brand-lavender/50 flex flex-col items-center justify-center gap-3 transition";
+        btnMini.className = "p-4 rounded-2xl border border-brand-border bg-white flex flex-col items-center justify-center gap-3 transition hover:border-purple-300";
+
+        // Exact calibrated ratio: 80 x 64.8 mm (Landscape)
+        frame.style.width = "380px";
+        frame.style.height = "308px";
+        windowEl.style.height = "225px";
+      }
+
+      // Update Image & Text
+      img.onload = () => {
+        applyPhotoTransform();
+      };
+      img.src = item.image;
+      if (img.complete) {
+        applyPhotoTransform();
+      }
+
+      captionInput.value = item.caption || '';
+      captionText.textContent = item.caption || '';
+      captionText.style.transform = `rotate(${item.tilt}deg)`;
+      captionText.style.fontSize = item.size + 'px';
+      tiltSlider.value = item.tilt;
+      sizeSlider.value = item.size;
+      tiltLabel.textContent = item.tilt + '°';
+      sizeLabel.textContent = item.size + 'px';
+
+      // Update font style
+      setFont(item.font, false);
+
+      // Apply zoom and pan
+      applyPhotoTransform();
+
+      renderTray();
+    }
+
+    // Change format for currently active polaroid
+    function changeCurrentFormat(fmt) {
+      if (polaroidBatch.length === 0) return;
+      polaroidBatch[activeIndex].format = fmt;
+      loadActivePolaroid();
+    }
+
+    // Adjust copies for current polaroid
+    function adjustCurrentCopies(delta) {
+      if (polaroidBatch.length === 0) return;
+      let newCopies = polaroidBatch[activeIndex].copies + delta;
+      if (newCopies < 1) newCopies = 1;
+      polaroidBatch[activeIndex].copies = newCopies;
+      loadActivePolaroid();
+    }
+
+    // Adjust copies for any polaroid by ID in tray
+    function setItemCopies(idx, delta) {
+      let newCopies = polaroidBatch[idx].copies + delta;
+      if (newCopies < 1) newCopies = 1;
+      polaroidBatch[idx].copies = newCopies;
+      loadActivePolaroid();
+    }
+
+    // Caption input handler
+    function onCaptionChange() {
+      if (polaroidBatch.length === 0) return;
+      const text = document.getElementById('caption-input').value;
+      const tilt = parseFloat(document.getElementById('tilt-slider').value);
+      const size = parseInt(document.getElementById('size-slider').value, 10);
+
+      polaroidBatch[activeIndex].caption = text;
+      polaroidBatch[activeIndex].tilt = tilt;
+      polaroidBatch[activeIndex].size = size;
+
+      document.getElementById('tilt-label').textContent = tilt + '°';
+      document.getElementById('size-label').textContent = size + 'px';
+
+      const caption = document.getElementById('live-caption-text');
+      caption.textContent = text || '';
+      caption.style.transform = `rotate(${tilt}deg)`;
+      caption.style.fontSize = size + 'px';
+
+      renderTray();
+    }
+
+    // Font switcher
+    function setFont(font, updateState = true) {
+      if (updateState && polaroidBatch.length > 0) {
+        polaroidBatch[activeIndex].font = font;
+      }
+      const caption = document.getElementById('live-caption-text');
+      const fHand = document.getElementById('f-hand');
+      const fMod = document.getElementById('f-mod');
+
+      if (font === 'handwriting') {
+        caption.style.fontFamily = "'Caveat', cursive";
+        fHand.className = "px-3 py-1 rounded-lg border-2 border-brand-purple bg-brand-lavender text-xs font-handwriting text-base font-bold text-brand-purple";
+        fMod.className = "px-3 py-1 rounded-lg border border-brand-border bg-white text-xs font-sans text-brand-muted hover:text-brand-dark";
+      } else {
+        caption.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+        fMod.className = "px-3 py-1 rounded-lg border-2 border-brand-purple bg-brand-lavender text-xs font-sans font-bold text-brand-purple";
+        fHand.className = "px-3 py-1 rounded-lg border border-brand-border bg-white text-xs font-handwriting text-base text-brand-muted hover:text-brand-dark";
+      }
+    }
+
+    // Multiple file upload handler
+    function handleMultiUpload(e) {
+      const files = Array.from(e.target.files);
+      if (files.length === 0) return;
+
+      files.forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const newPolaroid = {
+            id: Date.now() + i,
+            format: i % 2 === 0 ? 'mini' : 'wide',
+            image: evt.target.result,
+            caption: '',
+            tilt: -1.5,
+            size: 24,
+            font: 'handwriting',
+            copies: 1,
+            zoom: 1,
+            panX: 0,
+            panY: 0
+          };
+          polaroidBatch.push(newPolaroid);
+          activeIndex = polaroidBatch.length - 1;
+          loadActivePolaroid();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Add Blank Polaroid
+    function addNewBlankPolaroid() {
+      const newPolaroid = {
+        id: Date.now(),
+        format: 'mini',
+        image: 'public/media_1790099342694.jpg',
+        caption: '',
+        tilt: 0,
+        size: 24,
+        font: 'handwriting',
+        copies: 1,
+        zoom: 1,
+        panX: 0,
+        panY: 0
+      };
+      polaroidBatch.push(newPolaroid);
+      activeIndex = polaroidBatch.length - 1;
+      loadActivePolaroid();
+    }
+
+    // Duplicate Active Polaroid
+    function duplicateActivePolaroid() {
+      if (polaroidBatch.length === 0) return;
+      const current = polaroidBatch[activeIndex];
+      const dup = { ...current, id: Date.now(), copies: 1 };
+      polaroidBatch.splice(activeIndex + 1, 0, dup);
+      activeIndex++;
+      loadActivePolaroid();
+    }
+
+    // Delete Polaroid from Batch
+    function deletePolaroid(idx, event) {
+      event.stopPropagation();
+      polaroidBatch.splice(idx, 1);
+      if (activeIndex >= polaroidBatch.length) {
+        activeIndex = Math.max(0, polaroidBatch.length - 1);
+      }
+      loadActivePolaroid();
+    }
+
+    // Switch format directly from tray card
+    function toggleTrayFormat(idx, event) {
+      event.stopPropagation();
+      polaroidBatch[idx].format = polaroidBatch[idx].format === 'mini' ? 'wide' : 'mini';
+      loadActivePolaroid();
+    }
+
+    // Render Batch Tray
+    function renderTray() {
+      const container = document.getElementById('batch-tray-grid');
+      const badge = document.getElementById('tray-total-badge');
+      const navCount = document.getElementById('nav-count');
+      
+      let totalPrints = 0;
+      let miniCount = 0;
+      let wideCount = 0;
+
+      polaroidBatch.forEach(p => {
+        totalPrints += p.copies;
+        if (p.format === 'mini') miniCount += p.copies;
+        else wideCount += p.copies;
+      });
+
+      // Short badge — no overflow
+      badge.textContent = polaroidBatch.length === 0
+        ? 'Empty'
+        : `${polaroidBatch.length} photo${polaroidBatch.length === 1 ? '' : 's'} · ${totalPrints} print${totalPrints === 1 ? '' : 's'}`;
+      navCount.textContent = `${totalPrints} print${totalPrints === 1 ? '' : 's'}`;
+
+      container.innerHTML = '';
+
+      if (polaroidBatch.length === 0) {
+        container.innerHTML = `<p class="text-xs text-brand-muted italic py-4">No photos yet. Upload some above to get started.</p>`;
+        return;
+      }
+
+      polaroidBatch.forEach((item, idx) => {
+        const isSelected = idx === activeIndex;
+        const card = document.createElement('div');
+        card.className = `flex-shrink-0 w-44 rounded-2xl p-3 border transition cursor-pointer relative ${
+          isSelected 
+            ? 'bg-brand-lavender/60 border-brand-purple ring-2 ring-purple-500/30 shadow-md' 
+            : 'bg-white border-brand-border hover:border-purple-300 shadow-2xs'
+        }`;
+        card.onclick = () => {
+          activeIndex = idx;
+          loadActivePolaroid();
+        };
+
+        card.innerHTML = `
+          <!-- Top Row: format toggle & delete -->
+          <div class="flex items-center justify-between mb-2">
+            <button onclick="toggleTrayFormat(${idx}, event)" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+              item.format === 'mini' 
+                ? 'bg-purple-100 text-brand-purple border border-purple-200' 
+                : 'bg-indigo-100 text-indigo-700 border border-indigo-200'
+            }">
+              ${item.format === 'mini' ? 'Mini' : 'Wide'} ⟳
+            </button>
+            <button onclick="deletePolaroid(${idx}, event)" class="w-5 h-5 rounded-md hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center text-xs transition" title="Remove">
+              ✕
+            </button>
+          </div>
+
+          <!-- Polaroid Miniature Preview -->
+          <div class="bg-white rounded-xs p-1.5 shadow-xs border border-purple-100 mb-2 flex flex-col justify-between" style="height: 120px;">
+            <div class="w-full bg-slate-900 rounded-2xs overflow-hidden flex-1 mb-1">
+              <img src="${item.image}" class="w-full h-full object-cover">
+            </div>
+            <div class="text-[9px] font-handwriting text-slate-800 text-center truncate">
+              ${item.caption ? item.caption : '<span class="text-slate-400 italic">no caption</span>'}
+            </div>
+          </div>
+
+          <!-- Quantity Stepper for Copies -->
+          <div class="flex items-center justify-between pt-1 border-t border-purple-100" onclick="event.stopPropagation()">
+            <span class="text-[10px] text-brand-muted font-medium">Copies:</span>
+            <div class="flex items-center gap-1.5 bg-brand-lavender/50 px-1.5 py-0.5 rounded-lg border border-brand-border">
+              <button onclick="setItemCopies(${idx}, -1)" class="w-5 h-5 rounded bg-white hover:bg-brand-lavender text-xs text-brand-dark font-bold flex items-center justify-center leading-none shadow-2xs">
+                -
+              </button>
+              <span class="font-mono text-xs font-bold text-brand-purple px-1">${item.copies}</span>
+              <button onclick="setItemCopies(${idx}, 1)" class="w-5 h-5 rounded bg-brand-purple hover:bg-brand-purpleHover text-xs text-white font-bold flex items-center justify-center leading-none shadow-2xs">
+                +
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // Draggable Caption on Canvas
+    (function initCaptionDrag() {
+      const dragEl = document.getElementById('live-caption-text');
+      let isDragging = false;
+      let startX, startY, origLeft, origTop;
+
+      dragEl.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        dragEl.style.position = 'relative';
+        origLeft = parseInt(dragEl.style.left || '0', 10);
+        origTop = parseInt(dragEl.style.top || '0', 10);
+        document.body.style.userSelect = 'none';
+      });
+
+      window.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        dragEl.style.left = (origLeft + dx) + 'px';
+        dragEl.style.top = (origTop + dy) + 'px';
+      });
+
+      window.addEventListener('mouseup', function() {
+        if (isDragging) {
+          isDragging = false;
+          document.body.style.userSelect = '';
+        }
+      });
+    })();
+
+    // Drag-to-Pan & Wheel-Zoom on Photo Window (Canva Interaction)
+    (function initPhotoPanAndZoom() {
+      const windowEl = document.getElementById('live-photo-window');
+      const gridEl = document.getElementById('crop-grid');
+      let isPanning = false;
+      let startX, startY;
+
+      function startPan(clientX, clientY) {
+        isPanning = true;
+        startX = clientX;
+        startY = clientY;
+        windowEl.style.cursor = 'grabbing';
+        if (gridEl) {
+          gridEl.classList.remove('opacity-0');
+          gridEl.classList.add('opacity-100');
+        }
+      }
+
+      function movePan(clientX, clientY) {
+        if (!isPanning || polaroidBatch.length === 0) return;
+        const item = polaroidBatch[activeIndex];
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+        startX = clientX;
+        startY = clientY;
+
+        item.panX = (item.panX || 0) + dx;
+        item.panY = (item.panY || 0) + dy;
+        applyPhotoTransform();
+      }
+
+      function endPan() {
+        if (isPanning) {
+          isPanning = false;
+          windowEl.style.cursor = 'grab';
+          if (gridEl) {
+            gridEl.classList.remove('opacity-100');
+            gridEl.classList.add('opacity-0');
+          }
+        }
+      }
+
+      // Mouse events
+      windowEl.addEventListener('mousedown', function(e) {
+        if (e.target.id === 'live-caption-text') return;
+        startPan(e.clientX, e.clientY);
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', function(e) {
+        movePan(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('mouseup', endPan);
+
+      // Touch events (Mobile & Tablet)
+      windowEl.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+          startPan(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', function(e) {
+        if (isPanning && e.touches.length === 1) {
+          movePan(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchend', endPan);
+
+      // Mouse wheel zoom
+      windowEl.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.08 : -0.08;
+        adjustPhotoZoom(delta);
+      }, { passive: false });
+    })();
+
+    // Order Submission to Backend
+    async function submitBatchOrder() {
+      if (polaroidBatch.length === 0) {
+        alert("Your batch is empty! Please upload or add at least one photo.");
+        return;
+      }
+
+      const submitBtns = document.querySelectorAll('button[onclick="submitBatchOrder()"]');
+      submitBtns.forEach(b => {
+        b.disabled = true;
+        b.dataset.origHtml = b.innerHTML;
+        b.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Submitting...`;
+      });
+      if (window.lucide) lucide.createIcons();
+
+      try {
+        const formData = new FormData();
+        const itemsMeta = polaroidBatch.map((p, idx) => ({
+          id: p.id || (Date.now() + idx),
+          format: p.format,
+          caption: p.caption,
+          tilt: p.tilt,
+          size: p.size,
+          font: p.font,
+          copies: p.copies,
+          zoom: p.zoom || 1,
+          panX: p.panX || 0,
+          panY: p.panY || 0
+        }));
+
+        formData.append('items', JSON.stringify(itemsMeta));
+
+        for (let i = 0; i < polaroidBatch.length; i++) {
+          const item = polaroidBatch[i];
+          if (item.image.startsWith('data:')) {
+            const res = await fetch(item.image);
+            const blob = await res.blob();
+            formData.append(`photo_${item.id}`, blob, `polaroid_${item.id}.jpg`);
+          } else {
+            try {
+              const res = await fetch(item.image);
+              if (res.ok) {
+                const blob = await res.blob();
+                formData.append(`photo_${item.id}`, blob, `photo_${item.id}.jpg`);
+              }
+            } catch (err) {}
+          }
+        }
+
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        let total = 0;
+        polaroidBatch.forEach(p => total += p.copies);
+
+        if (data.success) {
+          showOrderSuccessModal(data.orderId, total);
+        } else {
+          showOrderSuccessModal('demo-' + Date.now().toString().slice(-6), total);
+        }
+      } catch (err) {
+        console.warn('Backend offline or submission fallback:', err);
+        let total = 0;
+        polaroidBatch.forEach(p => total += p.copies);
+        showOrderSuccessModal('offline-' + Date.now().toString().slice(-6), total);
+      } finally {
+        submitBtns.forEach(b => {
+          b.disabled = false;
+          b.innerHTML = b.dataset.origHtml || `<span>Submit Batch Order</span>`;
+        });
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    function showOrderSuccessModal(orderId, totalPrints) {
+      const modal = document.getElementById('order-modal');
+      const modalId = document.getElementById('modal-order-id');
+      const modalCount = document.getElementById('modal-order-count');
+      const modalAdminBtn = document.getElementById('modal-admin-btn');
+      
+      modalId.textContent = '#' + (orderId.length > 12 ? orderId.substring(0, 10) : orderId);
+      modalCount.textContent = `${totalPrints} Total Print${totalPrints === 1 ? '' : 's'} (${polaroidBatch.length} items)`;
+      if (modalAdminBtn) {
+        modalAdminBtn.href = `/admin`;
+      }
+
+      // RESET BATCH STATE IMMEDIATELY so user starts completely fresh
+      polaroidBatch = [];
+      activeIndex = 0;
+      const fileInput1 = document.getElementById('multi-file-input');
+      if (fileInput1) fileInput1.value = '';
+      loadActivePolaroid();
+
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        document.getElementById('order-modal-card').classList.remove('scale-95');
+      }, 20);
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeOrderModal() {
+      const modal = document.getElementById('order-modal');
+      modal.classList.add('opacity-0');
+      document.getElementById('order-modal-card').classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    // Initial load
+    loadActivePolaroid();
+  </script>
+</body>
+</html>

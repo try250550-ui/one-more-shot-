@@ -24,10 +24,13 @@ const { uploadToR2, downloadFromR2 } = require('../services/r2Storage');
 const storage = multer.memoryStorage();
 
 const fileFilter = function (req, file, cb) {
-    if (file.mimetype && file.mimetype.startsWith('image/')) {
+    const isJpegMime = file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/pjpeg';
+    const isJpegExt = /\.(jpg|jpeg)$/i.test(file.originalname || '');
+
+    if (isJpegMime && isJpegExt) {
         cb(null, true);
     } else {
-        cb(new Error('Only image files are allowed'), false);
+        cb(new Error('Only JPG/JPEG image files are allowed'), false);
     }
 };
 
@@ -198,15 +201,10 @@ router.patch('/:orderId/items/:itemId', (req, res) => {
 });
 
 function resolvePhotoPath(item) {
-    if (item.photoPath && fs.existsSync(item.photoPath)) return item.photoPath;
-    const uploadsDir = path.join(__dirname, '..', 'uploads');
-    if (fs.existsSync(uploadsDir)) {
-        try {
-            const files = fs.readdirSync(uploadsDir, { recursive: true });
-            const sample = files.find(f => f.endsWith('.jpg') || f.endsWith('.jpeg') || f.endsWith('.png'));
-            if (sample) return path.join(uploadsDir, sample);
-        } catch (e) {}
-    }
+    if (item.photoKey) return item.photoKey;
+    if (item.photoPath) return item.photoPath;
+    if (item.photoUrl) return item.photoUrl;
+    if (item.image) return item.image;
     return null;
 }
 
@@ -216,6 +214,11 @@ router.post('/:orderId/generate', async (req, res) => {
         const { orderId } = req.params;
         const order = orders.find(o => o.id === orderId || o.orderId === orderId);
         if (!order) return res.status(404).json({ error: 'Order not found' });
+
+        const forceReprint = req.body && req.body.forceReprint;
+        if ((order.status === 'ready' || order.status === 'fulfilled') && !forceReprint) {
+            return res.status(400).json({ error: 'Order has already been printed. Set forceReprint=true to reprint.' });
+        }
 
         const approvedItems = order.items.filter(i => i.status === 'approved');
         if (approvedItems.length === 0) {
