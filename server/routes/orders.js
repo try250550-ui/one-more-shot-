@@ -374,6 +374,9 @@ router.get('/:orderId/download', (req, res) => {
         fileStream.pipe(res);
     } else {
         res.status(404).json({ error: 'Print PDF not found. Generate it first in the Admin dashboard.' });
+    }
+});
+
 // Mark order as printed (moves to previous orders)
 router.post('/:orderId/mark-printed', (req, res) => {
     const { orderId } = req.params;
