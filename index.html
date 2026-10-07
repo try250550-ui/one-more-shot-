@@ -682,8 +682,12 @@
           <span id="modal-order-id" class="font-mono font-bold text-brand-purple">#ORD-LIVE</span>
         </div>
         <div class="flex justify-between">
+          <span class="text-brand-muted">Photos Uploaded:</span>
+          <span id="modal-photo-count" class="font-bold text-brand-dark">0 Photos</span>
+        </div>
+        <div class="flex justify-between">
           <span class="text-brand-muted">Total Prints:</span>
-          <span id="modal-order-count" class="font-bold text-brand-dark">2 Prints</span>
+          <span id="modal-order-count" class="font-bold text-brand-purple">0 Prints</span>
         </div>
         <div class="flex justify-between">
           <span class="text-brand-muted">Paper & Quality:</span>
@@ -692,10 +696,11 @@
       </div>
 
       <div class="space-y-2.5 pt-1">
-        <a id="modal-whatsapp-btn" href="https://wa.me/918073892740" target="_blank" class="w-full py-3 rounded-2xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
+        <a id="modal-whatsapp-btn" href="https://wa.me/918073892740" target="_blank" class="w-full py-3 rounded-2xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition transform active:scale-95">
           <i data-lucide="message-circle" class="w-4 h-4"></i>
-          <span>Track / Chat on WhatsApp (+91 8073892740)</span>
+          <span>Send Order Confirmation to WhatsApp (+91 8073892740)</span>
         </a>
+        <p class="text-[10px] text-center text-brand-muted">WhatsApp will open with your Order # and Photo Count pre-filled to message us directly.</p>
         <button onclick="closeOrderModal()" class="w-full py-2.5 rounded-2xl bg-brand-lavenderLight hover:bg-brand-lavender border border-brand-border text-brand-dark font-bold text-xs transition">
           Done / Create Another
         </button>
@@ -1373,14 +1378,31 @@
     function showOrderSuccessModal(orderId, totalPrints) {
       const modal = document.getElementById('order-modal');
       const modalId = document.getElementById('modal-order-id');
+      const modalPhotoCount = document.getElementById('modal-photo-count');
       const modalCount = document.getElementById('modal-order-count');
-      const modalAdminBtn = document.getElementById('modal-admin-btn');
+      const modalWaBtn = document.getElementById('modal-whatsapp-btn');
       
-      modalId.textContent = '#' + (orderId.length > 12 ? orderId.substring(0, 10) : orderId);
-      modalCount.textContent = `${totalPrints} Total Print${totalPrints === 1 ? '' : 's'} (${polaroidBatch.length} items)`;
-      if (modalAdminBtn) {
-        modalAdminBtn.href = `/admin`;
+      const shortId = (orderId.length > 12 ? orderId.substring(0, 10) : orderId);
+      const photoCount = polaroidBatch.length;
+
+      // Automated WhatsApp text with Order Number & Photo Count
+      const waMessage = `✨ Hello One More Shot! 📸\n\nI just placed an order on your website:\n• Order #: ${shortId}\n• Photos Uploaded: ${photoCount} photo${photoCount === 1 ? '' : 's'}\n• Total Prints: ${totalPrints} print${totalPrints === 1 ? '' : 's'}\n\nPlease confirm my order! Thank you ♡`;
+      const waUrl = `https://wa.me/918073892740?text=${encodeURIComponent(waMessage)}`;
+
+      modalId.textContent = '#' + shortId;
+      if (modalPhotoCount) {
+        modalPhotoCount.textContent = `${photoCount} Photo${photoCount === 1 ? '' : 's'}`;
       }
+      modalCount.textContent = `${totalPrints} Total Print${totalPrints === 1 ? '' : 's'}`;
+
+      if (modalWaBtn) {
+        modalWaBtn.href = waUrl;
+      }
+
+      // Automatically launch WhatsApp with pre-filled order text
+      try {
+        window.open(waUrl, '_blank');
+      } catch (e) {}
 
       // RESET BATCH STATE IMMEDIATELY so user starts completely fresh
       polaroidBatch = [];
