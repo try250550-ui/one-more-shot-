@@ -80,12 +80,12 @@
       
       <!-- Brand Logo & Tagline -->
       <a href="#home" class="flex items-center gap-3 group">
-        <img src="public/media_1790095659295.jpg" alt="One More Shot" class="w-10 h-10 rounded-xl object-cover border-2 border-brand-purple/30 shadow-xs group-hover:scale-105 transition">
+        <img src="public/media_1790095659295.jpg" alt="One More Shot" class="w-10 h-10 object-contain group-hover:scale-105 transition mix-blend-multiply">
         <div>
           <span class="text-base font-extrabold tracking-tight text-brand-dark flex items-center gap-1.5">
             One More Shot
           </span>
-          <p class="text-xs font-handwriting text-brand-purple font-bold -mt-0.5">for moment’s you’ll remember ♡</p>
+          <p class="text-xs font-handwriting text-brand-purple font-bold -mt-0.5">for moments you’ll remember ♡</p>
         </div>
       </a>
 
@@ -93,7 +93,6 @@
       <nav class="hidden md:flex items-center gap-8 text-xs font-semibold text-brand-muted">
         <a href="#home" class="hover:text-brand-purple transition">Home</a>
         <a href="#get-polaroids" class="hover:text-brand-purple transition">Get Your Polaroids</a>
-        <a href="#how-it-works" class="hover:text-brand-purple transition">How It Works</a>
         <a href="#about-us" class="hover:text-brand-purple transition">About Us</a>
         <a href="#contact" class="hover:text-brand-purple transition">Contact</a>
       </nav>
@@ -325,11 +324,11 @@
           <div class="bg-brand-lavenderLight rounded-2xl p-6 flex flex-col items-center justify-center min-h-[350px] border border-brand-border relative">
             
             <div id="live-polaroid-frame" class="bg-white rounded-xs p-3.5 polaroid-card border border-purple-100 flex flex-col justify-between transition-all duration-300 select-none relative"
-                 style="width: 280px; height: 362px;">
+                 style="width: 280px; height: 362px; touch-action: none;">
               
               <!-- Photo Window (Canva-style Clipping Mask with Drag-to-Pan and Wheel Zoom) -->
               <div id="live-photo-window" class="relative w-full bg-slate-900 rounded-xs overflow-hidden flex-shrink-0 cursor-grab active:cursor-grabbing select-none"
-                   style="height: 280px;" title="Click and drag to reposition • Scroll mouse to zoom">
+                   style="height: 280px; touch-action: none;" title="Click and drag to reposition • Scroll mouse to zoom">
                 <img id="live-photo-img" src="" alt="Customer Photo" class="pointer-events-none select-none transition-transform duration-75">
                 
                 <!-- Canva Rule of Thirds Crop Grid Overlay -->
@@ -495,77 +494,7 @@
 
   </section>
 
-  <!-- ==================== SECTION 3: HOW IT WORKS ==================== -->
-  <section id="how-it-works" class="max-w-6xl mx-auto px-4 py-20 border-t border-brand-border">
-    
-    <div class="text-center max-w-xl mx-auto mb-14 space-y-1">
-      <span class="text-xs font-bold text-brand-purple tracking-widest uppercase">The Process</span>
-      <h2 class="text-3xl font-extrabold text-brand-dark tracking-tight">How It Works</h2>
-      <p class="text-xs text-brand-muted">Your custom prints created in 4 effortless steps</p>
-    </div>
 
-    <!-- Step-by-Step Horizontal Progress Flow (1 -> 2 -> 3 -> 4) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-      
-      <!-- Step 1 -->
-      <div class="bg-white border border-brand-border rounded-3xl p-6 space-y-4 hover:border-brand-purple transition shadow-xs">
-        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-xl font-bold">
-          <i data-lucide="upload" class="w-5 h-5"></i>
-        </div>
-        <div class="space-y-1">
-          <span class="text-[10px] font-bold text-brand-purple uppercase tracking-widest">Step 01</span>
-          <h3 class="text-base font-bold text-brand-dark">Upload Photos</h3>
-          <p class="text-xs text-brand-muted leading-relaxed">
-            Select single or multiple photos from your gallery at once.
-          </p>
-        </div>
-      </div>
-
-      <!-- Step 2 -->
-      <div class="bg-white border border-brand-border rounded-3xl p-6 space-y-4 hover:border-brand-purple transition shadow-xs">
-        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-xl font-bold">
-          <i data-lucide="layout" class="w-5 h-5"></i>
-        </div>
-        <div class="space-y-1">
-          <span class="text-[10px] font-bold text-brand-purple uppercase tracking-widest">Step 02</span>
-          <h3 class="text-base font-bold text-brand-dark">Mix Templates</h3>
-          <p class="text-xs text-brand-muted leading-relaxed">
-            Choose Mini for portraits and Wide for panoramic shots in the same batch.
-          </p>
-        </div>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="bg-white border border-brand-border rounded-3xl p-6 space-y-4 hover:border-brand-purple transition shadow-xs">
-        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-xl font-bold">
-          <i data-lucide="copy" class="w-5 h-5"></i>
-        </div>
-        <div class="space-y-1">
-          <span class="text-[10px] font-bold text-brand-purple uppercase tracking-widest">Step 03</span>
-          <h3 class="text-base font-bold text-brand-dark">Set Copies & Captions</h3>
-          <p class="text-xs text-brand-muted leading-relaxed">
-            Choose how many copies of each polaroid you need and add custom captions.
-          </p>
-        </div>
-      </div>
-
-      <!-- Step 4 -->
-      <div class="bg-white border border-brand-border rounded-3xl p-6 space-y-4 hover:border-brand-purple transition shadow-xs">
-        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-xl font-bold">
-          <i data-lucide="printer" class="w-5 h-5"></i>
-        </div>
-        <div class="space-y-1">
-          <span class="text-[10px] font-bold text-brand-purple uppercase tracking-widest">Step 04</span>
-          <h3 class="text-base font-bold text-brand-dark">Print & Keep</h3>
-          <p class="text-xs text-brand-muted leading-relaxed">
-            We print on archival high-gloss photo paper and deliver to your hands.
-          </p>
-        </div>
-      </div>
-
-    </div>
-
-  </section>
 
   <!-- ==================== SECTION 4: ABOUT US (REPLACED INQUIRIES SECTION) ==================== -->
   <section id="about-us" class="max-w-6xl mx-auto px-4 py-20 border-t border-brand-border">
@@ -1196,38 +1125,73 @@
       let isDragging = false;
       let startX, startY, origLeft, origTop;
 
-      dragEl.addEventListener('mousedown', function(e) {
+      function startDrag(clientX, clientY) {
         isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
+        startX = clientX;
+        startY = clientY;
         dragEl.style.position = 'relative';
         origLeft = parseInt(dragEl.style.left || '0', 10);
         origTop = parseInt(dragEl.style.top || '0', 10);
         document.body.style.userSelect = 'none';
-      });
+      }
 
-      window.addEventListener('mousemove', function(e) {
+      function moveDrag(clientX, clientY) {
         if (!isDragging) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
+        const dx = clientX - startX;
+        const dy = clientY - startY;
         dragEl.style.left = (origLeft + dx) + 'px';
         dragEl.style.top = (origTop + dy) + 'px';
-      });
+      }
 
-      window.addEventListener('mouseup', function() {
+      function endDrag() {
         if (isDragging) {
           isDragging = false;
           document.body.style.userSelect = '';
         }
+      }
+
+      dragEl.addEventListener('mousedown', function(e) {
+        startDrag(e.clientX, e.clientY);
+        e.preventDefault();
       });
+
+      window.addEventListener('mousemove', function(e) {
+        if (isDragging) moveDrag(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('mouseup', endDrag);
+
+      dragEl.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+          e.preventDefault();
+          startDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      window.addEventListener('touchmove', function(e) {
+        if (isDragging && e.touches.length === 1) {
+          e.preventDefault();
+          moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      window.addEventListener('touchend', endDrag);
     })();
 
-    // Drag-to-Pan & Wheel-Zoom on Photo Window (Canva Interaction)
+    // Drag-to-Pan & Pinch-to-Zoom on Photo Window (Mobile & Touch Screen Optimized)
     (function initPhotoPanAndZoom() {
       const windowEl = document.getElementById('live-photo-window');
       const gridEl = document.getElementById('crop-grid');
       let isPanning = false;
       let startX, startY;
+      let initialPinchDistance = null;
+      let initialZoom = 1;
+
+      function getDistance(t1, t2) {
+        const dx = t1.clientX - t2.clientX;
+        const dy = t1.clientY - t2.clientY;
+        return Math.hypot(dx, dy);
+      }
 
       function startPan(clientX, clientY) {
         isPanning = true;
@@ -1256,6 +1220,7 @@
       function endPan() {
         if (isPanning) {
           isPanning = false;
+          initialPinchDistance = null;
           windowEl.style.cursor = 'grab';
           if (gridEl) {
             gridEl.classList.remove('opacity-100');
@@ -1272,25 +1237,48 @@
       });
 
       window.addEventListener('mousemove', function(e) {
-        movePan(e.clientX, e.clientY);
+        if (isPanning) movePan(e.clientX, e.clientY);
       });
 
       window.addEventListener('mouseup', endPan);
 
-      // Touch events (Mobile & Tablet)
+      // Touch events with passive: false to PREVENT page scroll and browser zoom on mobile
       windowEl.addEventListener('touchstart', function(e) {
+        if (e.target.id === 'live-caption-text') return;
         if (e.touches.length === 1) {
+          e.preventDefault();
           startPan(e.touches[0].clientX, e.touches[0].clientY);
+        } else if (e.touches.length === 2 && polaroidBatch.length > 0) {
+          e.preventDefault();
+          isPanning = false;
+          initialPinchDistance = getDistance(e.touches[0], e.touches[1]);
+          initialZoom = polaroidBatch[activeIndex].zoom || 1;
         }
-      }, { passive: true });
+      }, { passive: false });
 
-      window.addEventListener('touchmove', function(e) {
-        if (isPanning && e.touches.length === 1) {
+      windowEl.addEventListener('touchmove', function(e) {
+        if (e.touches.length === 1 && isPanning) {
+          e.preventDefault();
           movePan(e.touches[0].clientX, e.touches[0].clientY);
+        } else if (e.touches.length === 2 && initialPinchDistance && polaroidBatch.length > 0) {
+          e.preventDefault();
+          const currentDist = getDistance(e.touches[0], e.touches[1]);
+          const scale = currentDist / initialPinchDistance;
+          let nextZoom = Math.max(1, Math.min(3, initialZoom * scale));
+          polaroidBatch[activeIndex].zoom = Math.round(nextZoom * 100) / 100;
+          applyPhotoTransform();
+          showTemporaryZoomBadge();
         }
-      }, { passive: true });
+      }, { passive: false });
 
-      window.addEventListener('touchend', endPan);
+      windowEl.addEventListener('touchend', function(e) {
+        if (e.touches.length < 2) {
+          initialPinchDistance = null;
+        }
+        if (e.touches.length === 0) {
+          endPan();
+        }
+      });
 
       // Mouse wheel zoom
       windowEl.addEventListener('wheel', function(e) {
