@@ -117,9 +117,9 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-6 bg-brand-bg px-6 py-2 rounded-2xl border border-brand-border">
+        <div class="flex items-center gap-5 bg-brand-bg px-6 py-2 rounded-2xl border border-brand-border">
             <div class="text-center">
-                <div class="text-xs text-brand-muted uppercase tracking-wider font-bold">Total</div>
+                <div class="text-xs text-brand-muted uppercase tracking-wider font-bold">Active Orders</div>
                 <div class="text-xl font-bold" id="stat-total">0</div>
             </div>
             <div class="text-center">
@@ -131,8 +131,8 @@
                 <div class="text-xl font-bold text-green-600" id="stat-approved">0</div>
             </div>
             <div class="text-center">
-                <div class="text-xs text-brand-muted uppercase tracking-wider font-bold">Rejected</div>
-                <div class="text-xl font-bold text-red-600" id="stat-rejected">0</div>
+                <div class="text-xs text-brand-muted uppercase tracking-wider font-bold">Previous Orders</div>
+                <div class="text-xl font-bold text-purple-700" id="stat-previous">0</div>
             </div>
         </div>
     </header>
@@ -141,20 +141,20 @@
     <main class="flex-1 flex flex-col md:flex-row gap-4 p-4 overflow-hidden">
         
         <!-- Left Sidebar (Orders List) -->
-        <aside class="card w-full md:w-[30%] flex flex-col overflow-hidden">
+        <aside class="card w-full md:w-[32%] flex flex-col overflow-hidden">
             <div class="p-4 border-b border-brand-border shrink-0 space-y-2.5">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-base font-bold text-brand-dark">Incoming Orders</h2>
+                    <h2 class="text-base font-bold text-brand-dark" id="sidebar-title">Incoming Orders</h2>
                     <span id="orders-count-badge" class="text-xs font-mono font-bold text-brand-purple bg-brand-lavender px-2 py-0.5 rounded-full">0</span>
                 </div>
-                <!-- Filter Bar -->
-                <div class="flex gap-1.5 text-xs bg-brand-bg p-1 rounded-xl">
-                    <button class="filter-btn flex-1 py-1 px-1.5 rounded-lg bg-white shadow-sm font-medium transition-all text-center" data-filter="all">All</button>
-                    <button class="filter-btn flex-1 py-1 px-1.5 rounded-lg hover:bg-white/50 text-brand-muted transition-all text-center" data-filter="pending">Pending</button>
-                    <button class="filter-btn flex-1 py-1 px-1.5 rounded-lg hover:bg-white/50 text-brand-muted transition-all text-center" data-filter="approved">Approved</button>
-                    <button class="filter-btn flex-1 py-1 px-1.5 rounded-lg hover:bg-white/50 text-brand-muted transition-all text-center" data-filter="rejected">Rejected</button>
+                <!-- Filter Bar: All, Pending, Approved, Previous Orders -->
+                <div class="flex gap-1 text-xs bg-brand-bg p-1 rounded-xl">
+                    <button class="filter-btn flex-1 py-1 px-1 rounded-lg bg-white shadow-sm font-medium transition-all text-center" data-filter="all">All</button>
+                    <button class="filter-btn flex-1 py-1 px-1 rounded-lg hover:bg-white/50 text-brand-muted transition-all text-center" data-filter="pending">Pending</button>
+                    <button class="filter-btn flex-1 py-1 px-1 rounded-lg hover:bg-white/50 text-brand-muted transition-all text-center" data-filter="approved">Approved</button>
+                    <button class="filter-btn flex-1 py-1 px-1 rounded-lg hover:bg-white/50 text-brand-muted transition-all text-center" data-filter="previous">Previous Orders</button>
                 </div>
-                <!-- Multi-Order Batch Print Button -->
+                <!-- Multi-Order Batch Print Button (excludes already printed orders) -->
                 <button onclick="batchGenerateAllReady()" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-800 hover:to-indigo-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-xs">
                     <i data-lucide="layers" class="w-3.5 h-3.5"></i>
                     <span>Batch Print All Approved Orders</span>
@@ -173,7 +173,7 @@
         </aside>
 
         <!-- Right Panel (Order Details) -->
-        <section class="card w-full md:w-[70%] flex flex-col overflow-hidden relative">
+        <section class="card w-full md:w-[68%] flex flex-col overflow-hidden relative">
             <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center bg-white rounded-3xl z-10 transition-opacity duration-300">
                 <i data-lucide="inbox" class="w-16 h-16 text-brand-lavender mb-4"></i>
                 <h3 class="text-xl font-bold text-brand-dark">Waiting for orders...</h3>
@@ -185,13 +185,14 @@
                 <div>
                     <h2 class="text-2xl font-bold text-brand-dark flex items-center gap-3">
                         Order <span id="detail-order-id" class="text-brand-purple">#---</span>
+                        <span id="detail-order-status-badge" class="hidden text-xs font-semibold px-2.5 py-1 rounded-full"></span>
                     </h2>
                     <p id="detail-order-time" class="text-xs text-brand-muted mt-0.5">---</p>
                 </div>
                 
                 <div class="flex items-center gap-4">
                     <div class="text-right">
-                        <div class="text-[10px] text-brand-muted font-bold uppercase tracking-wider">Active Prints</div>
+                        <div class="text-[10px] text-brand-muted font-bold uppercase tracking-wider">Prints in Order</div>
                         <div id="detail-order-prints" class="text-2xl font-extrabold text-brand-purple">0</div>
                     </div>
                     
@@ -214,16 +215,23 @@
                 <!-- Items will be injected here -->
             </div>
 
+            <!-- Bottom Action Bar -->
             <div class="p-4 border-t border-brand-border bg-white shrink-0 z-0 flex items-center justify-between">
-                <div id="action-status" class="text-xs font-semibold text-brand-muted">
+                <div id="action-status" class="text-xs font-semibold text-brand-muted flex items-center gap-2">
                     Waiting for action...
                 </div>
-                <div class="flex gap-3">
+                <div class="flex gap-2.5 items-center">
                     <button id="btn-generate" disabled class="px-6 py-2.5 rounded-xl font-bold bg-brand-purple text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-brand-dark transition-colors flex items-center gap-2 shadow-sm text-xs">
                         <i data-lucide="printer" class="w-4 h-4"></i> Generate Print Sheet
                     </button>
-                    <button id="btn-download" disabled class="px-6 py-2.5 rounded-xl font-bold bg-emerald-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-emerald-700 transition-colors flex items-center gap-2 hidden shadow-sm text-xs">
-                        <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+                    <button id="btn-download" disabled class="px-5 py-2.5 rounded-xl font-bold bg-emerald-600 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-emerald-700 transition-colors flex items-center gap-2 hidden shadow-sm text-xs">
+                        <i data-lucide="download" class="w-4 h-4"></i> Download PDF & Mark Done
+                    </button>
+                    <button id="btn-mark-printed" class="px-4 py-2.5 rounded-xl font-bold bg-purple-700 text-white hover:bg-purple-800 transition-colors flex items-center gap-2 hidden shadow-sm text-xs">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i> Mark Done
+                    </button>
+                    <button id="btn-restore-active" class="px-4 py-2.5 rounded-xl font-bold bg-slate-600 text-white hover:bg-slate-700 transition-colors flex items-center gap-2 hidden shadow-sm text-xs">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Move back to Active
                     </button>
                 </div>
             </div>
@@ -252,6 +260,9 @@
         const filterBtns = document.querySelectorAll('.filter-btn');
         const btnGenerate = document.getElementById('btn-generate');
         const btnDownload = document.getElementById('btn-download');
+        const btnMarkPrinted = document.getElementById('btn-mark-printed');
+        const btnRestoreActive = document.getElementById('btn-restore-active');
+        const btnApproveAll = document.getElementById('btn-approve-all');
         const actionStatus = document.getElementById('action-status');
 
         // Helper: Time ago
@@ -276,7 +287,7 @@
         // Update timestamps periodically
         setInterval(() => {
             renderOrderList();
-            if(selectedOrderId) updateOrderDetailsHeader();
+            if (selectedOrderId) updateOrderDetailsHeader();
         }, 60000);
 
         // Toast Notification
@@ -285,8 +296,8 @@
             const toast = document.createElement('div');
             
             const icon = type === 'success' ? 'check-circle' : (type === 'error' ? 'alert-circle' : 'info');
-            const color = type === 'success' ? 'text-green-500' : (type === 'error' ? 'text-red-500' : 'text-blue-500');
-            const bgColor = type === 'success' ? 'bg-green-50 border-green-200' : (type === 'error' ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200');
+            const color = type === 'success' ? 'text-green-500' : (type === 'error' ? 'text-red-500' : 'text-purple-600');
+            const bgColor = type === 'success' ? 'bg-green-50 border-green-200' : (type === 'error' ? 'bg-red-50 border-red-200' : 'bg-purple-50 border-purple-200');
             
             toast.className = `toast flex items-center gap-3 p-4 rounded-2xl border shadow-lg ${bgColor}`;
             toast.innerHTML = `
@@ -299,7 +310,7 @@
             
             setTimeout(() => {
                 toast.remove();
-            }, 3000);
+            }, 3500);
         }
 
         // WebSocket Connection
@@ -329,15 +340,24 @@
                         }
                         if (data.event === 'pdf_ready') {
                             showToast('PDF is ready! Click Download.', 'success');
-                            enableDownload(data.orderId);
-                            // Update local state if needed
-                            const order = orders.find(o => o.id === data.orderId);
-                            if(order) {
+                            const order = orders.find(o => o.id === data.orderId || o.orderId === data.orderId);
+                            if (order) {
                                 order.status = 'ready';
                                 renderOrderList();
+                                if (selectedOrderId === data.orderId) renderOrderDetails();
                             }
                         }
-                    } catch(err) {
+                        if (data.event === 'order_printed') {
+                            const order = orders.find(o => o.id === data.orderId || o.orderId === data.orderId);
+                            if (order) {
+                                order.status = 'printed';
+                                order.printedAt = data.order?.printedAt || new Date().toISOString();
+                                updateStats();
+                                renderOrderList();
+                                if (selectedOrderId === data.orderId) renderOrderDetails();
+                            }
+                        }
+                    } catch (err) {
                         console.error('WS message error:', err);
                     }
                 };
@@ -359,20 +379,18 @@
         // Fetch initial data
         async function fetchOrders() {
             try {
-                // Remove skeleton
                 document.querySelector('.loading-skeleton')?.remove();
                 
-                // Fetch orders from relative API
                 const response = await fetch('/api/orders').catch(() => null);
                 if (response && response.ok) {
                     const data = await response.json();
                     orders = data;
                 } else {
-                    // Fallback mock data for demo
+                    // Fallback mock data for testing
                     orders = [
                         {
                             id: 'ord-1a2b3c4d',
-                            createdAt: new Date(Date.now() - 5*60000).toISOString(), // 5 mins ago
+                            createdAt: new Date(Date.now() - 5*60000).toISOString(),
                             status: 'pending',
                             items: [
                                 { id: 'itm-1', type: 'mini', photoUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80', caption: 'Best day ever', copies: 2, status: 'pending' },
@@ -381,7 +399,7 @@
                         },
                         {
                             id: 'ord-9f8e7d6c',
-                            createdAt: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
+                            createdAt: new Date(Date.now() - 3600000).toISOString(),
                             status: 'partial',
                             items: [
                                 { id: 'itm-3', type: 'mini', photoUrl: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&q=80', caption: 'Nature walk', copies: 3, status: 'approved' },
@@ -405,73 +423,60 @@
             renderOrderList();
         }
 
-        // Update stats
+        // Update stats bar: Total Active, Pending prints, Approved prints, Previous Orders
         function updateStats() {
-            let total = orders.length;
-            let pending = 0;
-            let approved = 0;
-            let rejected = 0;
+            const activeOrders = orders.filter(o => o.status !== 'printed');
+            const previousOrders = orders.filter(o => o.status === 'printed');
 
-            orders.forEach(o => {
-                let allApproved = true;
-                let anyPending = false;
-                
-                o.items.forEach(i => {
-                    if (i.status === 'pending') {
-                        anyPending = true;
-                        allApproved = false;
-                    }
-                });
-
-                if (o.status === 'ready') approved++;
-                else if (anyPending && o.items.some(i => i.status !== 'pending')) {
-                    // This logic determines order level status, normally done on backend
-                }
-                
-                if (o.status === 'pending' || o.items.every(i => i.status === 'pending')) pending++;
-            });
-
-            // Count items globally for stats
             let itemsPending = 0;
             let itemsApproved = 0;
-            let itemsRejected = 0;
-            orders.forEach(o => {
+            activeOrders.forEach(o => {
                 o.items.forEach(i => {
                     if (i.status === 'pending') itemsPending++;
                     if (i.status === 'approved') itemsApproved++;
-                    if (i.status === 'rejected') itemsRejected++;
                 });
             });
 
-            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-total').innerText = activeOrders.length;
             document.getElementById('stat-pending').innerText = itemsPending;
             document.getElementById('stat-approved').innerText = itemsApproved;
-            document.getElementById('stat-rejected').innerText = itemsRejected;
+            document.getElementById('stat-previous').innerText = previousOrders.length;
         }
 
         // Render functions
         function renderOrderList() {
             ordersListEl.innerHTML = '';
             
-            // Apply filter
-            let filtered = orders;
-            if (currentFilter !== 'all') {
-                filtered = orders.filter(o => {
-                    if(currentFilter === 'pending') return o.status === 'pending' || o.items.some(i=>i.status==='pending');
-                    if(currentFilter === 'approved') return o.status === 'ready' || o.items.every(i=>i.status==='approved');
-                    if(currentFilter === 'rejected') return o.status === 'rejected' || o.items.some(i=>i.status==='rejected');
-                    return true;
-                });
+            // Filter logic:
+            // 'all': active orders only (excludes printed/completed)
+            // 'pending': active orders with pending status or items
+            // 'approved': active orders with approved or ready status
+            // 'previous': orders that are printed / completed
+            let filtered = [];
+            if (currentFilter === 'all') {
+                filtered = orders.filter(o => o.status !== 'printed');
+            } else if (currentFilter === 'pending') {
+                filtered = orders.filter(o => o.status !== 'printed' && (o.status === 'pending' || o.items.some(i => i.status === 'pending')));
+            } else if (currentFilter === 'approved') {
+                filtered = orders.filter(o => o.status !== 'printed' && (o.status === 'ready' || o.status === 'approved' || (o.items.length > 0 && o.items.every(i => i.status === 'approved'))));
+            } else if (currentFilter === 'previous') {
+                filtered = orders.filter(o => o.status === 'printed');
             }
 
+            // Update badge count
+            document.getElementById('orders-count-badge').innerText = filtered.length;
+
             if (filtered.length === 0) {
-                ordersListEl.innerHTML = `<div class="text-center text-brand-muted py-8 text-sm">No orders found.</div>`;
+                const emptyMsg = currentFilter === 'previous' 
+                    ? 'No previous orders yet. Once you download or batch print orders, they will appear here.'
+                    : 'No active orders in this view.';
+                ordersListEl.innerHTML = `<div class="text-center text-brand-muted py-8 text-xs px-4">${emptyMsg}</div>`;
                 return;
             }
 
             filtered.forEach(order => {
-                const totalPrints = order.items.reduce((sum, item) => sum + item.copies, 0);
-                const shortId = order.id.substring(0, 8);
+                const totalPrints = order.items.reduce((sum, item) => sum + (item.copies || 1), 0);
+                const shortId = (order.id || order.orderId || '').substring(0, 8);
                 
                 // Determine badge
                 let badgeClass = 'bg-brand-lavender text-brand-purple';
@@ -481,13 +486,15 @@
                 const rejectedCount = order.items.filter(i => i.status === 'rejected').length;
                 const totalItems = order.items.length;
 
-                if (order.status === 'ready') {
+                if (order.status === 'printed') {
+                    badgeClass = 'bg-purple-100 text-purple-800 border border-purple-200';
+                    badgeText = '✓ Printed';
+                } else if (order.status === 'ready') {
                     badgeClass = 'bg-green-100 text-green-700';
                     badgeText = 'Ready';
                 } else if (approvedCount + rejectedCount === totalItems && totalItems > 0) {
-                     // All items reviewed but not generated yet
-                     badgeClass = 'bg-blue-100 text-blue-700';
-                     badgeText = 'Reviewed';
+                    badgeClass = 'bg-blue-100 text-blue-700';
+                    badgeText = 'Reviewed';
                 } else if (approvedCount > 0 || rejectedCount > 0) {
                     badgeClass = 'bg-amber-100 text-amber-700';
                     badgeText = 'Partial';
@@ -526,10 +533,23 @@
         }
 
         function updateOrderDetailsHeader() {
-            const order = orders.find(o => o.id === selectedOrderId);
+            const order = orders.find(o => o.id === selectedOrderId || o.orderId === selectedOrderId);
             if (!order) return;
-            document.getElementById('detail-order-id').innerText = '#' + order.id.substring(0, 8);
+            document.getElementById('detail-order-id').innerText = '#' + (order.id || order.orderId).substring(0, 8);
             document.getElementById('detail-order-time').innerText = timeAgo(order.createdAt);
+
+            const badgeEl = document.getElementById('detail-order-status-badge');
+            if (order.status === 'printed') {
+                badgeEl.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200';
+                badgeEl.innerText = 'Previous / Printed';
+                badgeEl.classList.remove('hidden');
+            } else if (order.status === 'ready') {
+                badgeEl.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-700';
+                badgeEl.innerText = 'Ready to Print';
+                badgeEl.classList.remove('hidden');
+            } else {
+                badgeEl.classList.add('hidden');
+            }
         }
 
         let showRejected = false;
@@ -640,20 +660,46 @@
             const approvedItems = order.items.filter(i => i.status === 'approved');
             const totalActive = order.items.filter(i => i.status !== 'rejected').length;
             const reviewedActive = approvedItems.length;
-            
-            actionStatus.innerText = `${reviewedActive} of ${totalActive} active items approved for printing`;
 
-            if (order.status === 'ready') {
+            if (order.status === 'printed') {
+                actionStatus.innerHTML = `<span class="text-purple-700 font-bold flex items-center gap-1.5"><i data-lucide="check-check" class="w-4 h-4"></i> Order Completed & In Previous Orders ${order.printedAt ? '(' + timeAgo(order.printedAt) + ')' : ''}</span>`;
                 btnGenerate.classList.add('hidden');
+                
+                // Can download again anytime
                 btnDownload.classList.remove('hidden');
                 btnDownload.disabled = false;
-                btnDownload.onclick = () => downloadPDF(order.id);
+                btnDownload.innerHTML = `<i data-lucide="download" class="w-4 h-4"></i> Download PDF Again`;
+                btnDownload.onclick = () => downloadPDF(order.id, false);
+                
+                btnMarkPrinted.classList.add('hidden');
+                
+                // Allow moving back to active if desired
+                btnRestoreActive.classList.remove('hidden');
+                btnRestoreActive.onclick = () => restoreOrderActive(order.id);
+            } else if (order.status === 'ready') {
+                actionStatus.innerHTML = `<span class="text-green-700 font-bold flex items-center gap-1.5"><i data-lucide="check" class="w-4 h-4"></i> Print sheet ready! Click download to get PDF.</span>`;
+                btnGenerate.classList.add('hidden');
+                
+                btnDownload.classList.remove('hidden');
+                btnDownload.disabled = false;
+                btnDownload.innerHTML = `<i data-lucide="download" class="w-4 h-4"></i> Download PDF & Mark Done`;
+                btnDownload.onclick = () => downloadPDF(order.id, true);
+                
+                btnMarkPrinted.classList.remove('hidden');
+                btnMarkPrinted.onclick = () => markOrderPrinted(order.id);
+                btnRestoreActive.classList.add('hidden');
             } else {
+                actionStatus.innerText = `${reviewedActive} of ${totalActive} active items approved for printing`;
                 btnGenerate.classList.remove('hidden');
-                btnDownload.classList.add('hidden');
                 btnGenerate.disabled = approvedItems.length === 0;
+                btnGenerate.innerHTML = `<i data-lucide="printer" class="w-4 h-4"></i> Generate Print Sheet`;
                 btnGenerate.onclick = () => generateSheet(order.id);
+                
+                btnDownload.classList.add('hidden');
+                btnMarkPrinted.classList.add('hidden');
+                btnRestoreActive.classList.add('hidden');
             }
+            lucide.createIcons();
         }
 
         // Approve All Items in the selected order
@@ -667,7 +713,9 @@
                     i.status = 'approved';
                 }
             });
-            order.status = 'approved';
+            if (order.status !== 'printed') {
+                order.status = 'approved';
+            }
 
             renderOrderDetails();
             updateStats();
@@ -679,11 +727,13 @@
             } catch (err) {}
         }
 
-        // Batch print across multiple customer orders
+        // Batch print across multiple customer orders (Excludes already printed orders!)
         async function batchGenerateAllReady() {
-            const readyOrders = orders.filter(o => o.items.some(i => i.status === 'approved'));
+            // ONLY pick orders that are NOT in previous/printed orders and have approved items
+            const readyOrders = orders.filter(o => o.status !== 'printed' && o.items.some(i => i.status === 'approved'));
+            
             if (readyOrders.length === 0) {
-                showToast('Please approve at least one order before batch printing', 'error');
+                showToast('No new approved orders to batch print. (Previous orders are excluded)', 'info');
                 return;
             }
 
@@ -696,9 +746,19 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast(`Multi-Order PDF Ready! (${data.pages} A4 Pages, ${data.totalPrints} prints)`, 'success');
+                    showToast(`Multi-Order PDF Ready! (${data.pages} Pages). Moved ${readyOrders.length} orders to Previous Orders!`, 'success');
+                    
+                    // Mark all batched orders as printed locally so they immediately separate!
+                    const now = new Date().toISOString();
+                    readyOrders.forEach(o => {
+                        o.status = 'printed';
+                        o.printedAt = now;
+                    });
+                    
                     window.open(`${data.pdfUrl}`, '_blank');
-                    fetchOrders();
+                    updateStats();
+                    renderOrderList();
+                    if (selectedOrderId) renderOrderDetails();
                 } else {
                     showToast(data.error || 'Batch generation failed', 'error');
                 }
@@ -707,18 +767,66 @@
             }
         }
 
-        // Actions
+        // Mark single order as printed / completed -> Moves to Previous Orders
+        async function markOrderPrinted(orderId) {
+            const order = orders.find(o => o.id === orderId || o.orderId === orderId);
+            if (!order) return;
+
+            order.status = 'printed';
+            order.printedAt = new Date().toISOString();
+            
+            showToast('Order moved to Previous Orders! 🎉', 'success');
+            updateStats();
+            renderOrderList();
+            if (selectedOrderId === orderId) renderOrderDetails();
+
+            try {
+                await fetch(`/api/orders/${orderId}/mark-printed`, { method: 'POST' });
+            } catch (e) {
+                console.warn('mark-printed backend sync:', e);
+            }
+        }
+
+        // Restore single order back to active
+        async function restoreOrderActive(orderId) {
+            const order = orders.find(o => o.id === orderId || o.orderId === orderId);
+            if (!order) return;
+
+            order.status = 'ready';
+            showToast('Order moved back to Active orders', 'info');
+            updateStats();
+            renderOrderList();
+            if (selectedOrderId === orderId) renderOrderDetails();
+
+            try {
+                await fetch(`/api/orders/${orderId}/unmark-printed`, { method: 'POST' });
+            } catch (e) {}
+        }
+
+        // Download PDF
+        function downloadPDF(orderId, markAsDone = true) {
+            showToast('Starting A4 Print Sheet download...', 'info');
+            window.open(`/api/orders/${orderId}/download`, '_blank');
+            
+            if (markAsDone) {
+                setTimeout(() => {
+                    markOrderPrinted(orderId);
+                }, 600);
+            }
+        }
+
+        // Actions: Approve / Reject individual items
         async function handleItemAction(orderId, itemId, action) {
             const order = orders.find(o => o.id === orderId || o.orderId === orderId);
-            if(!order) return;
+            if (!order) return;
             const item = order.items.find(i => String(i.id) === String(itemId));
-            if(!item) return;
+            if (!item) return;
 
             const newStatus = action === 'approve' ? 'approved' : 'rejected';
             item.status = newStatus;
 
             if (newStatus === 'rejected') {
-                showToast('Item rejected and removed from print list', 'info');
+                showToast('Item rejected and excluded from print sheet', 'info');
             } else {
                 showToast('Item approved for printing!', 'success');
             }
@@ -774,29 +882,25 @@
             }
         }
 
-        function downloadPDF(orderId) {
-            showToast('Starting A4 Print Sheet download...', 'info');
-            window.open(`/api/orders/${orderId}/download`, '_blank');
-        }
-
-        function enableDownload(orderId) {
-            if(selectedOrderId === orderId) {
-                const order = orders.find(o => o.id === orderId);
-                if(order) updateActionBar(order);
-            }
-        }
-
-        // Filters
+        // Filters: All, Pending, Approved, Previous Orders
         filterBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
-                // Update styles
                 filterBtns.forEach(b => {
-                    b.className = 'filter-btn flex-1 py-1 px-2 rounded-lg hover:bg-white/50 text-brand-muted transition-all';
+                    b.className = 'filter-btn flex-1 py-1 px-1 rounded-lg hover:bg-white/50 text-brand-muted transition-all text-center';
                 });
-                const target = e.target;
-                target.className = 'filter-btn flex-1 py-1 px-2 rounded-lg bg-white shadow-sm font-medium transition-all';
+                const target = e.currentTarget || e.target;
+                target.className = 'filter-btn flex-1 py-1 px-1 rounded-lg bg-white shadow-sm font-medium transition-all text-center';
                 
                 currentFilter = target.dataset.filter;
+                
+                const titleMap = {
+                    'all': 'Active Orders',
+                    'pending': 'Pending Orders',
+                    'approved': 'Approved Orders',
+                    'previous': 'Previous Orders'
+                };
+                document.getElementById('sidebar-title').innerText = titleMap[currentFilter] || 'Orders';
+
                 renderOrderList();
             });
         });
@@ -804,9 +908,8 @@
         // Keyboard Shortcuts
         document.addEventListener('keydown', (e) => {
             if (!selectedOrderId) return;
-            // Get first pending item
-            const order = orders.find(o => o.id === selectedOrderId);
-            if (!order) return;
+            const order = orders.find(o => o.id === selectedOrderId || o.orderId === selectedOrderId);
+            if (!order || order.status === 'printed') return;
             const pendingItem = order.items.find(i => i.status === 'pending');
             
             if (e.key.toLowerCase() === 'a' && pendingItem) {

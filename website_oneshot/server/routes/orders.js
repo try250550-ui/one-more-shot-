@@ -288,7 +288,7 @@ router.post('/batch-generate', async (req, res) => {
         const { orderIds = [], forceReprint = false } = req.body;
         const targetOrders = orderIds.length > 0 
             ? orders.filter(o => orderIds.includes(o.id) || orderIds.includes(o.orderId))
-            : orders.filter(o => o.items.some(i => i.status === 'approved') && (forceReprint || o.status !== 'ready'));
+            : orders.filter(o => o.items.some(i => i.status === 'approved') && (forceReprint || (o.status !== 'ready' && o.status !== 'printed')));
 
         if (targetOrders.length === 0) {
             return res.status(400).json({ error: 'No orders with approved items found.' });
@@ -334,7 +334,7 @@ router.post('/batch-generate', async (req, res) => {
 
         const printedAt = new Date().toISOString();
         targetOrders.forEach(o => {
-            o.status = 'ready';
+            o.status = 'printed';
             o.printedAt = printedAt;
             saveOrder(o);
         });
@@ -374,7 +374,62 @@ router.get('/:orderId/download', (req, res) => {
         fileStream.pipe(res);
     } else {
         res.status(404).json({ error: 'Print PDF not found. Generate it first in the Admin dashboard.' });
+// Mark order as printed (moves to previous orders)
+router.post('/:orderId/mark-printed', (req, res) => {
+    const { orderId } = req.params;
+    const order = orders.find(o => o.id === orderId || o.orderId === orderId);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+
+    order.status = 'printed';
+    order.printedAt = new Date().toISOString();
+    saveOrder(order);
+
+    const broadcastWS = req.app.get('broadcastWS');
+    if (broadcastWS) {
+        broadcastWS({ event: 'order_printed', orderId, order });
     }
+
+    res.json({ success: true, order });
+});
+
+// Restore order back to active
+router.post('/:orderId/unmark-printed', (req, res) => {
+    const { orderId } = req.params;
+    const order = orders.find(o => o.id === orderId || o.orderId === orderId);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+
+    order.status = 'ready';
+    saveOrder(order);
+
+    const broadcastWS = req.app.get('broadcastWS');
+    if (broadcastWS) {
+        broadcastWS({ event: 'order_unmarked', orderId, order });
+    }
+
+    res.json({ success: true, order });
+});
+
+// Batch mark multiple orders as printed
+router.post('/mark-printed-batch', (req, res) => {
+    const { orderIds = [] } = req.body;
+    const printedAt = new Date().toISOString();
+    const updated = [];
+
+    orders.forEach(o => {
+        if (orderIds.includes(o.id) || orderIds.includes(o.orderId)) {
+            o.status = 'printed';
+            o.printedAt = printedAt;
+            saveOrder(o);
+            updated.push(o.id);
+        }
+    });
+
+    const broadcastWS = req.app.get('broadcastWS');
+    if (broadcastWS) {
+        broadcastWS({ event: 'orders_printed_batch', orderIds: updated });
+    }
+
+    res.json({ success: true, count: updated.length, orderIds: updated });
 });
 
 module.exports = router;
