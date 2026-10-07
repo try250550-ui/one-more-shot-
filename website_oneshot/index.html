@@ -72,7 +72,12 @@
     }
   </style>
 </head>
-<body class="font-sans antialiased selection:bg-purple-200 selection:text-purple-900">
+<body class="font-sans antialiased selection:bg-purple-200 selection:text-purple-900 relative">
+
+  <!-- Transparent Logo Watermark in Background -->
+  <div class="fixed inset-0 pointer-events-none flex items-center justify-center -z-10 select-none overflow-hidden" aria-hidden="true">
+    <img src="public/logo_transparent.png" alt="" class="w-[520px] max-w-[85vw] opacity-[0.06] object-contain">
+  </div>
 
   <!-- ==================== HEADER & NAVIGATION ==================== -->
   <header class="sticky top-0 z-50 bg-[#faf6f0]/90 backdrop-blur-md border-b border-brand-border/70">
@@ -80,7 +85,7 @@
       
       <!-- Brand Logo & Tagline -->
       <a href="#home" class="flex items-center gap-3 group">
-        <img src="public/media_1790095659295.jpg" alt="One More Shot" class="w-10 h-10 object-contain group-hover:scale-105 transition mix-blend-multiply">
+        <img src="public/logo_transparent.png" alt="One More Shot" class="w-11 h-11 object-contain group-hover:scale-105 transition">
         <div>
           <span class="text-base font-extrabold tracking-tight text-brand-dark flex items-center gap-1.5">
             One More Shot
