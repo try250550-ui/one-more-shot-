@@ -59,6 +59,15 @@
     .tray-scrollbar::-webkit-scrollbar {
       height: 6px;
     }
+    .apple-spring {
+      transition: transform 380ms cubic-bezier(0.175, 0.885, 0.32, 1.15), opacity 260ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .apple-press {
+      transition: transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 120ms ease;
+    }
+    .apple-press:active {
+      transform: scale(0.96);
+    }
     .tray-scrollbar::-webkit-scrollbar-track {
       background: #efe7f8;
       border-radius: 9999px;
@@ -661,8 +670,8 @@
   </footer>
 
   <!-- ==================== CUSTOMER ORDER CONFIRMATION MODAL ==================== -->
-  <div id="order-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
-    <div class="bg-white border border-brand-border rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl space-y-5 transform scale-95 transition-transform duration-300" id="order-modal-card">
+  <div id="order-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white/95 backdrop-blur-md border border-white/60 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl space-y-5 transform scale-90 opacity-0 apple-spring" id="order-modal-card">
       <div class="w-14 h-14 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center text-3xl mx-auto shadow-inner">
         ✨
       </div>
@@ -670,13 +679,13 @@
         <span class="text-[10px] font-mono font-bold tracking-widest text-brand-purple uppercase bg-brand-lavender px-3 py-1 rounded-full border border-purple-200">
           Order Confirmed
         </span>
-        <h3 class="text-xl font-extrabold text-brand-dark">Memories on Their Way!</h3>
+        <h3 class="text-xl font-extrabold text-brand-dark tracking-tight">Memories on Their Way!</h3>
         <p class="text-xs text-brand-muted leading-relaxed">
           Thank you for choosing One More Shot. Your custom prints have been scheduled for 300 DPI lab printing.
         </p>
       </div>
 
-      <div class="bg-brand-lavenderLight border border-brand-border rounded-2xl p-4 space-y-2 text-xs">
+      <div class="bg-brand-lavenderLight/70 border border-brand-border/60 rounded-2xl p-4 space-y-2 text-xs">
         <div class="flex justify-between">
           <span class="text-brand-muted">Order Reference:</span>
           <span id="modal-order-id" class="font-mono font-bold text-brand-purple">#ORD-LIVE</span>
@@ -696,12 +705,12 @@
       </div>
 
       <div class="space-y-2.5 pt-1">
-        <a id="modal-whatsapp-btn" href="https://wa.me/918073892740" target="_blank" class="w-full py-3 rounded-2xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition transform active:scale-95">
+        <a id="modal-whatsapp-btn" href="https://wa.me/918073892740" target="_blank" class="w-full py-3 rounded-2xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md apple-press">
           <i data-lucide="message-circle" class="w-4 h-4"></i>
           <span>Send Order Confirmation to WhatsApp (+91 8073892740)</span>
         </a>
         <p class="text-[10px] text-center text-brand-muted">WhatsApp will open with your Order # and Photo Count pre-filled to message us directly.</p>
-        <button onclick="closeOrderModal()" class="w-full py-2.5 rounded-2xl bg-brand-lavenderLight hover:bg-brand-lavender border border-brand-border text-brand-dark font-bold text-xs transition">
+        <button onclick="closeOrderModal()" class="w-full py-2.5 rounded-2xl bg-brand-lavenderLight hover:bg-brand-lavender border border-brand-border text-brand-dark font-bold text-xs apple-press">
           Done / Create Another
         </button>
       </div>
@@ -1412,17 +1421,21 @@
       loadActivePolaroid();
 
       modal.classList.remove('hidden');
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         modal.classList.remove('opacity-0');
-        document.getElementById('order-modal-card').classList.remove('scale-95');
-      }, 20);
+        const card = document.getElementById('order-modal-card');
+        card.classList.remove('scale-90', 'opacity-0');
+        card.classList.add('scale-100', 'opacity-100');
+      });
       if (window.lucide) lucide.createIcons();
     }
 
     function closeOrderModal() {
       const modal = document.getElementById('order-modal');
+      const card = document.getElementById('order-modal-card');
       modal.classList.add('opacity-0');
-      document.getElementById('order-modal-card').classList.add('scale-95');
+      card.classList.remove('scale-100', 'opacity-100');
+      card.classList.add('scale-90', 'opacity-0');
       setTimeout(() => {
         modal.classList.add('hidden');
       }, 300);
