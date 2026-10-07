@@ -338,6 +338,26 @@
                             addOrder(data.order);
                             showToast('New order received! 🎉', 'success');
                         }
+                        if (data.event === 'order_approved_all') {
+                            const order = orders.find(o => o.id === data.orderId || o.orderId === data.orderId);
+                            if (order && data.order) {
+                                order.status = data.order.status;
+                                order.items = data.order.items;
+                                updateStats();
+                                renderOrderList();
+                                if (selectedOrderId === data.orderId) renderOrderDetails();
+                            }
+                        }
+                        if (data.event === 'item_updated') {
+                            const order = orders.find(o => o.id === data.orderId || o.orderId === data.orderId);
+                            if (order && data.order) {
+                                order.status = data.order.status;
+                                order.items = data.order.items;
+                                updateStats();
+                                renderOrderList();
+                                if (selectedOrderId === data.orderId) renderOrderDetails();
+                            }
+                        }
                         if (data.event === 'pdf_ready') {
                             showToast('PDF is ready! Click Download.', 'success');
                             const order = orders.find(o => o.id === data.orderId || o.orderId === data.orderId);
@@ -458,7 +478,7 @@
             } else if (currentFilter === 'pending') {
                 filtered = orders.filter(o => o.status !== 'printed' && (o.status === 'pending' || o.items.some(i => i.status === 'pending')));
             } else if (currentFilter === 'approved') {
-                filtered = orders.filter(o => o.status !== 'printed' && (o.status === 'ready' || o.status === 'approved' || (o.items.length > 0 && o.items.every(i => i.status === 'approved'))));
+                filtered = orders.filter(o => o.status !== 'printed' && (o.status === 'ready' || o.status === 'approved' || o.items.some(i => i.status === 'approved')));
             } else if (currentFilter === 'previous') {
                 filtered = orders.filter(o => o.status === 'printed');
             }
@@ -574,7 +594,7 @@
 
             updateOrderDetailsHeader();
             
-            // Only count active (non-rejected) items towards print total
+            // Always show all items with clear numbering so the admin has a permanent complete preview
             const printableItems = order.items.filter(item => item.status !== 'rejected');
             const totalPrints = printableItems.reduce((sum, item) => sum + (item.copies || 1), 0);
             document.getElementById('detail-order-prints').innerText = totalPrints;
@@ -587,36 +607,39 @@
 
             if (rejectedCount > 0) {
                 noticeBar.classList.remove('hidden');
-                noticeText.innerText = `${rejectedCount} item${rejectedCount === 1 ? '' : 's'} rejected & excluded from printing`;
-                toggleBtn.innerText = showRejected ? 'Hide Rejected' : 'Show Rejected';
+                noticeText.innerText = `⚠️ ${rejectedCount} item${rejectedCount === 1 ? '' : 's'} marked Rejected (excluded from final print sheet)`;
+                if (toggleBtn) toggleBtn.classList.add('hidden');
             } else {
                 noticeBar.classList.add('hidden');
             }
 
-            // Filter items: exclude rejected unless showRejected is explicitly toggled on
-            const displayItems = showRejected ? order.items : printableItems;
+            // Always display all items so order is permanently viewable in full
+            const displayItems = order.items;
 
             // Render Items
             itemsGridEl.innerHTML = '';
             if (displayItems.length === 0) {
                 itemsGridEl.innerHTML = `
                     <div class="col-span-full py-12 text-center">
-                        <p class="text-sm font-bold text-brand-muted">No active items to print.</p>
-                        <p class="text-xs text-brand-muted mt-1">All items in this order were rejected.</p>
+                        <p class="text-sm font-bold text-brand-muted">No items in this order.</p>
                     </div>
                 `;
             }
 
-            displayItems.forEach(item => {
+            displayItems.forEach((item, index) => {
+                const photoNum = index + 1;
                 let statusClass = 'border-brand-border bg-white';
                 let statusBadge = '';
+                let statusPill = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">Pending Review</span>`;
                 
                 if (item.status === 'approved') {
                     statusClass = 'border-emerald-500 shadow-[0_0_0_1px_rgba(16,185,129,1)] bg-emerald-50/40';
-                    statusBadge = `<div class="absolute top-2 right-2 bg-emerald-500 text-white p-1 rounded-full shadow"><i data-lucide="check" class="w-3.5 h-3.5"></i></div>`;
+                    statusBadge = `<div class="absolute top-2 right-2 bg-emerald-500 text-white p-1 rounded-full shadow z-10"><i data-lucide="check" class="w-3.5 h-3.5"></i></div>`;
+                    statusPill = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">✓ In Print Sheet</span>`;
                 } else if (item.status === 'rejected') {
-                    statusClass = 'border-rose-400 opacity-60 bg-rose-50/50';
-                    statusBadge = `<div class="absolute top-2 right-2 bg-rose-500 text-white p-1 rounded-full shadow"><i data-lucide="x" class="w-3.5 h-3.5"></i></div>`;
+                    statusClass = 'border-rose-400 opacity-75 bg-rose-50/50';
+                    statusBadge = `<div class="absolute top-2 right-2 bg-rose-500 text-white p-1 rounded-full shadow z-10"><i data-lucide="x" class="w-3.5 h-3.5"></i></div>`;
+                    statusPill = `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-200">✕ Excluded / Rejected</span>`;
                 }
 
                 const aspectClass = (item.type === 'mini' || item.format === 'mini') ? 'aspect-[3/4]' : 'aspect-[4/3]';
@@ -627,9 +650,20 @@
                 
                 el.innerHTML = `
                     ${statusBadge}
-                    <div class="relative w-full ${aspectClass} bg-slate-900 rounded-xl overflow-hidden mb-3 border border-purple-100 shadow-2xs">
-                        <img src="${item.photoUrl}" class="w-full h-full object-cover" alt="Polaroid photo">
+                    <!-- Photo Sequential Number Badge -->
+                    <div class="absolute top-2 left-2 bg-brand-dark/85 backdrop-blur-xs text-white px-2 py-0.5 rounded-lg text-xs font-mono font-bold shadow z-10 flex items-center gap-1">
+                        <span>#${photoNum}</span>
                     </div>
+
+                    <div class="relative w-full ${aspectClass} bg-slate-900 rounded-xl overflow-hidden mb-3 border border-purple-100 shadow-2xs">
+                        <img src="${item.photoUrl}" class="w-full h-full object-cover" alt="Polaroid photo #${photoNum}">
+                    </div>
+
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-brand-dark">Photo #${photoNum}</span>
+                        ${statusPill}
+                    </div>
+
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex-1 pr-2">
                             <div class="text-[10px] font-bold uppercase tracking-wider text-brand-purple mb-0.5">${item.type || item.format} Format</div>
@@ -640,11 +674,11 @@
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="handleItemAction('${order.id}', '${item.id}', 'approve')" class="flex-1 py-1.5 rounded-lg border border-emerald-500 text-emerald-600 hover:bg-emerald-500 hover:text-white font-bold transition flex items-center justify-center gap-1 text-xs ${item.status === 'approved' ? 'bg-emerald-500 text-white' : ''}">
-                            <i data-lucide="check" class="w-3.5 h-3.5"></i> Approve
+                        <button onclick="handleItemAction('${order.id}', '${item.id}', 'approve')" class="flex-1 py-1.5 rounded-lg border border-emerald-500 text-emerald-600 hover:bg-emerald-500 hover:text-white font-bold transition flex items-center justify-center gap-1 text-xs ${item.status === 'approved' ? 'bg-emerald-500 text-white shadow-xs' : ''}">
+                            <i data-lucide="check" class="w-3.5 h-3.5"></i> ${item.status === 'approved' ? 'Approved' : 'Approve'}
                         </button>
-                        <button onclick="handleItemAction('${order.id}', '${item.id}', 'reject')" class="flex-1 py-1.5 rounded-lg border border-rose-500 text-rose-600 hover:bg-rose-500 hover:text-white font-bold transition flex items-center justify-center gap-1 text-xs ${item.status === 'rejected' ? 'bg-rose-500 text-white' : ''}">
-                            <i data-lucide="x" class="w-3.5 h-3.5"></i> Reject
+                        <button onclick="handleItemAction('${order.id}', '${item.id}', 'reject')" class="flex-1 py-1.5 rounded-lg border border-rose-500 text-rose-600 hover:bg-rose-500 hover:text-white font-bold transition flex items-center justify-center gap-1 text-xs ${item.status === 'rejected' ? 'bg-rose-500 text-white shadow-xs' : ''}">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i> ${item.status === 'rejected' ? 'Rejected' : 'Reject'}
                         </button>
                     </div>
                 `;
