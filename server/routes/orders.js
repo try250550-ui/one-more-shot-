@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 const { processPhoto, buildPolaroidCard, buildA4Sheets } = require('../services/imageProcessor');
 const { generatePDF } = require('../services/pdfGenerator');
 
-const { getAllOrders, saveOrder, updateOrderPrintedAt } = require('../db');
+const { getAllOrders, saveOrder, updateOrderPrintedAt, getNextTokenNumber } = require('../db');
 
 const basicAuth = require('express-basic-auth');
 
@@ -260,6 +260,10 @@ router.post('/:orderId/generate', async (req, res) => {
         const outputPath = path.join(orderDir, `sheet_${orderId}.pdf`);
         await generatePDF(a4Buffers, outputPath);
 
+        if (!order.tokenNumber) {
+            order.tokenNumber = getNextTokenNumber();
+        }
+
         const printedAt = new Date().toISOString();
         order.status = 'ready';
         order.printedAt = printedAt;
@@ -267,12 +271,19 @@ router.post('/:orderId/generate', async (req, res) => {
 
         const broadcastWS = req.app.get('broadcastWS');
         if (broadcastWS) {
-            broadcastWS({ event: 'pdf_ready', orderId, pdfUrl: `/api/orders/${orderId}/download`, pages: a4Buffers.length });
+            broadcastWS({
+                event: 'pdf_ready',
+                orderId,
+                tokenNumber: order.tokenNumber,
+                pdfUrl: `/api/orders/${orderId}/download`,
+                pages: a4Buffers.length
+            });
         }
 
         res.json({
             success: true,
             orderId,
+            tokenNumber: order.tokenNumber,
             pages: a4Buffers.length,
             pdfUrl: `/api/orders/${orderId}/download`
         });
@@ -325,7 +336,8 @@ router.post('/batch-generate', async (req, res) => {
         }
 
         const a4Buffers = await buildA4Sheets(polaroidCards);
-        const batchId = 'batch_' + Date.now();
+        const batchToken = getNextTokenNumber();
+        const batchId = 'batch_token_' + batchToken;
         const batchDir = path.join(__dirname, '..', 'uploads', 'batches');
         if (!fs.existsSync(batchDir)) fs.mkdirSync(batchDir, { recursive: true });
 
@@ -334,6 +346,9 @@ router.post('/batch-generate', async (req, res) => {
 
         const printedAt = new Date().toISOString();
         targetOrders.forEach(o => {
+            if (!o.tokenNumber) {
+                o.tokenNumber = batchToken;
+            }
             o.status = 'printed';
             o.printedAt = printedAt;
             saveOrder(o);
@@ -342,6 +357,7 @@ router.post('/batch-generate', async (req, res) => {
         res.json({
             success: true,
             batchId,
+            tokenNumber: batchToken,
             pages: a4Buffers.length,
             totalPrints: polaroidCards.reduce((s, c) => s + c.copies, 0),
             pdfUrl: `/api/orders/batch/download/${batchId}`
@@ -356,8 +372,10 @@ router.get('/batch/download/:batchId', (req, res) => {
     const { batchId } = req.params;
     const filePath = path.join(__dirname, '..', 'uploads', 'batches', `${batchId}.pdf`);
     if (fs.existsSync(filePath)) {
+        const tokenMatch = batchId.match(/batch_token_(\d+)/);
+        const tokenNum = tokenMatch ? tokenMatch[1] : Date.now();
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="OneMoreShot_MultiOrder_${batchId}.pdf"`);
+        res.setHeader('Content-Disposition', `attachment; filename="One More Shot Token ${tokenNum}.pdf"`);
         fs.createReadStream(filePath).pipe(res);
     } else {
         res.status(404).json({ error: 'Batch PDF not found' });
@@ -366,10 +384,12 @@ router.get('/batch/download/:batchId', (req, res) => {
 
 router.get('/:orderId/download', (req, res) => {
     const { orderId } = req.params;
+    const order = orders.find(o => o.id === orderId || o.orderId === orderId);
+    const tokenNum = order && order.tokenNumber ? order.tokenNumber : 1;
     const filePath = path.join(__dirname, '..', 'uploads', orderId, `sheet_${orderId}.pdf`);
     if (fs.existsSync(filePath)) {
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename="OneMoreShot_A4_${orderId.substring(0, 8)}.pdf"`);
+        res.setHeader('Content-Disposition', `attachment; filename="One More Shot Token ${tokenNum}.pdf"`);
         const fileStream = fs.createReadStream(filePath);
         fileStream.pipe(res);
     } else {

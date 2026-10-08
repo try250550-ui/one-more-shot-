@@ -20,9 +20,22 @@ db.exec(`
         status TEXT NOT NULL,
         createdAt TEXT NOT NULL,
         itemsJson TEXT NOT NULL,
-        printedAt TEXT
+        printedAt TEXT,
+        tokenNumber INTEGER
     )
 `);
+
+try {
+    db.exec(`ALTER TABLE orders ADD COLUMN tokenNumber INTEGER`);
+} catch (e) {}
+
+/**
+ * Gets next sequential token number for order printing
+ */
+function getNextTokenNumber() {
+    const row = db.prepare('SELECT MAX(tokenNumber) as maxToken FROM orders').get();
+    return (row && row.maxToken) ? row.maxToken + 1 : 1;
+}
 
 /**
  * Loads all orders from SQLite database
@@ -37,6 +50,7 @@ function getAllOrders() {
         createdAt: r.createdAt,
         timestamp: r.createdAt,
         printedAt: r.printedAt || null,
+        tokenNumber: r.tokenNumber || null,
         items: JSON.parse(r.itemsJson || '[]')
     }));
 }
@@ -47,19 +61,21 @@ function getAllOrders() {
  */
 function saveOrder(order) {
     const stmt = db.prepare(`
-        INSERT INTO orders (id, status, createdAt, itemsJson, printedAt)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO orders (id, status, createdAt, itemsJson, printedAt, tokenNumber)
+        VALUES (?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
             status = excluded.status,
             itemsJson = excluded.itemsJson,
-            printedAt = excluded.printedAt
+            printedAt = excluded.printedAt,
+            tokenNumber = COALESCE(excluded.tokenNumber, orders.tokenNumber)
     `);
     stmt.run(
         order.id || order.orderId,
         order.status,
         order.createdAt || order.timestamp || new Date().toISOString(),
         JSON.stringify(order.items || []),
-        order.printedAt || null
+        order.printedAt || null,
+        order.tokenNumber || null
     );
 }
 
@@ -81,5 +97,6 @@ module.exports = {
     db,
     getAllOrders,
     saveOrder,
-    updateOrderPrintedAt
+    updateOrderPrintedAt,
+    getNextTokenNumber
 };

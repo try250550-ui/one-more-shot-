@@ -736,7 +736,7 @@
             lucide.createIcons();
         }
 
-        // Approve All Items in the selected order
+        // Approve All Items in the selected order AND Auto-Generate & Download PDF
         async function approveAllSelectedOrder() {
             if (!selectedOrderId) return;
             const order = orders.find(o => o.id === selectedOrderId || o.orderId === selectedOrderId);
@@ -747,18 +747,19 @@
                     i.status = 'approved';
                 }
             });
-            if (order.status !== 'printed') {
-                order.status = 'approved';
-            }
+            order.status = 'approved';
 
             renderOrderDetails();
             updateStats();
             renderOrderList();
-            showToast('All active items approved! Ready to print.', 'success');
+            showToast('All active items approved! Auto-generating print sheet & downloading...', 'info');
 
             try {
                 await fetch(`/api/orders/${order.id}/approve-all`, { method: 'POST' });
-            } catch (err) {}
+                await generateSheet(order.id, true);
+            } catch (err) {
+                console.warn('Approve all error:', err);
+            }
         }
 
         // Batch print across multiple customer orders (Excludes already printed orders!)
@@ -780,13 +781,14 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast(`Multi-Order PDF Ready! (${data.pages} Pages). Moved ${readyOrders.length} orders to Previous Orders!`, 'success');
+                    showToast(`Multi-Order PDF Ready! Token #${data.tokenNumber || ''} (${data.pages} Pages). Auto-downloading...`, 'success');
                     
                     // Mark all batched orders as printed locally so they immediately separate!
                     const now = new Date().toISOString();
                     readyOrders.forEach(o => {
                         o.status = 'printed';
                         o.printedAt = now;
+                        o.tokenNumber = data.tokenNumber || o.tokenNumber;
                     });
                     
                     window.open(`${data.pdfUrl}`, '_blank');
@@ -880,7 +882,7 @@
             }
         }
 
-        async function generateSheet(orderId) {
+        async function generateSheet(orderId, autoDownload = false) {
             btnGenerate.disabled = true;
             const originalText = btnGenerate.innerHTML;
             btnGenerate.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Generating 300 DPI Sheet...`;
@@ -891,13 +893,20 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showToast('A4 Print Sheet generated successfully! 🎉', 'success');
+                    showToast(`A4 Print Sheet generated! Token #${result.tokenNumber || ''} 🎉`, 'success');
                     const order = orders.find(o => o.id === orderId || o.orderId === orderId);
                     if (order) {
                         order.status = 'ready';
+                        if (result.tokenNumber) order.tokenNumber = result.tokenNumber;
                     }
                     renderOrderList();
                     if (selectedOrderId === orderId) renderOrderDetails();
+                    
+                    if (autoDownload) {
+                        setTimeout(() => {
+                            downloadPDF(orderId, true);
+                        }, 400);
+                    }
                 } else {
                     showToast(result.error || 'Please approve at least 1 item to print', 'error');
                     btnGenerate.disabled = false;
@@ -912,6 +921,9 @@
                     if (order) order.status = 'ready';
                     renderOrderList();
                     if (selectedOrderId === orderId) renderOrderDetails();
+                    if (autoDownload) {
+                        downloadPDF(orderId, true);
+                    }
                 }, 1200);
             }
         }
