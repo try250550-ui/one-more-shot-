@@ -117,7 +117,7 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-5 bg-brand-bg px-6 py-2 rounded-2xl border border-brand-border">
+        <div class="flex items-center gap-4 bg-brand-bg px-5 py-2 rounded-2xl border border-brand-border">
             <div class="text-center">
                 <div class="text-xs text-brand-muted uppercase tracking-wider font-bold">Active Orders</div>
                 <div class="text-xl font-bold" id="stat-total">0</div>
@@ -130,7 +130,14 @@
                 <div class="text-xs text-brand-muted uppercase tracking-wider font-bold">Approved</div>
                 <div class="text-xl font-bold text-green-600" id="stat-approved">0</div>
             </div>
-            <div class="text-center">
+            <div class="text-center border-l border-brand-border pl-4">
+                <div class="text-xs text-brand-muted uppercase tracking-wider font-bold">A4 Paper Fill</div>
+                <div class="text-sm font-bold text-brand-purple flex items-center gap-1.5" id="stat-paper-fill">
+                    <span class="w-2 h-2 rounded-full bg-slate-300" id="paper-dot"></span>
+                    <span id="paper-fill-text">0 / 8 Polaroids</span>
+                </div>
+            </div>
+            <div class="text-center border-l border-brand-border pl-4">
                 <div class="text-xs text-brand-muted uppercase tracking-wider font-bold">Previous Orders</div>
                 <div class="text-xl font-bold text-purple-700" id="stat-previous">0</div>
             </div>
@@ -443,7 +450,7 @@
             renderOrderList();
         }
 
-        // Update stats bar: Total Active, Pending prints, Approved prints, Previous Orders
+        // Update stats bar: Total Active, Pending prints, Approved prints, A4 Paper Fill, Previous Orders
         function updateStats() {
             const activeOrders = orders.filter(o => o.status !== 'printed');
             const previousOrders = orders.filter(o => o.status === 'printed');
@@ -452,8 +459,9 @@
             let itemsApproved = 0;
             activeOrders.forEach(o => {
                 o.items.forEach(i => {
-                    if (i.status === 'pending') itemsPending++;
-                    if (i.status === 'approved') itemsApproved++;
+                    const copies = parseInt(i.copies, 10) || 1;
+                    if (i.status === 'pending') itemsPending += copies;
+                    if (i.status === 'approved') itemsApproved += copies;
                 });
             });
 
@@ -461,17 +469,30 @@
             document.getElementById('stat-pending').innerText = itemsPending;
             document.getElementById('stat-approved').innerText = itemsApproved;
             document.getElementById('stat-previous').innerText = previousOrders.length;
+
+            // A4 Paper Fill Calculation (standard sheet fits ~8 polaroids)
+            const paperFillText = document.getElementById('paper-fill-text');
+            const paperDot = document.getElementById('paper-dot');
+            if (paperFillText && paperDot) {
+                if (itemsApproved === 0) {
+                    paperFillText.innerText = '0 / 8 Polaroids (0%)';
+                    paperDot.className = 'w-2 h-2 rounded-full bg-slate-300';
+                } else if (itemsApproved < 8) {
+                    const pct = Math.round((itemsApproved / 8) * 100);
+                    paperFillText.innerText = `${itemsApproved} / 8 Polaroids (${pct}%)`;
+                    paperDot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+                } else {
+                    const sheets = (itemsApproved / 8).toFixed(1);
+                    paperFillText.innerText = `✨ ${itemsApproved} Polaroids (${sheets} Sheets Full!)`;
+                    paperDot.className = 'w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]';
+                }
+            }
         }
 
         // Render functions
         function renderOrderList() {
             ordersListEl.innerHTML = '';
             
-            // Filter logic:
-            // 'all': active orders only (excludes printed/completed)
-            // 'pending': active orders with pending status or items
-            // 'approved': active orders with approved or ready status
-            // 'previous': orders that are printed / completed
             let filtered = [];
             if (currentFilter === 'all') {
                 filtered = orders.filter(o => o.status !== 'printed');
@@ -488,7 +509,7 @@
 
             if (filtered.length === 0) {
                 const emptyMsg = currentFilter === 'previous' 
-                    ? 'No previous orders yet. Once you download or batch print orders, they will appear here.'
+                    ? 'No previous orders yet. Once you batch print orders, they will appear here.'
                     : 'No active orders in this view.';
                 ordersListEl.innerHTML = `<div class="text-center text-brand-muted py-8 text-xs px-4">${emptyMsg}</div>`;
                 return;
@@ -496,7 +517,7 @@
 
             filtered.forEach(order => {
                 const totalPrints = order.items.reduce((sum, item) => sum + (item.copies || 1), 0);
-                const shortId = (order.id || order.orderId || '').substring(0, 8);
+                const orderLabel = order.orderNumber ? `Order #${order.orderNumber}` : `#${(order.id || order.orderId || '').substring(0, 6)}`;
                 
                 // Determine badge
                 let badgeClass = 'bg-brand-lavender text-brand-purple';
@@ -508,14 +529,11 @@
 
                 if (order.status === 'printed') {
                     badgeClass = 'bg-purple-100 text-purple-800 border border-purple-200';
-                    badgeText = '✓ Printed';
-                } else if (order.status === 'ready') {
-                    badgeClass = 'bg-green-100 text-green-700';
-                    badgeText = 'Ready';
-                } else if (approvedCount + rejectedCount === totalItems && totalItems > 0) {
-                    badgeClass = 'bg-blue-100 text-blue-700';
-                    badgeText = 'Reviewed';
-                } else if (approvedCount > 0 || rejectedCount > 0) {
+                    badgeText = order.tokenNumber ? `✓ Printed (Token #${order.tokenNumber})` : '✓ Printed';
+                } else if (order.status === 'ready' || order.status === 'approved' || approvedCount === totalItems) {
+                    badgeClass = 'bg-green-100 text-green-700 font-bold';
+                    badgeText = '✓ Approved (Ready)';
+                } else if (approvedCount > 0) {
                     badgeClass = 'bg-amber-100 text-amber-700';
                     badgeText = 'Partial';
                 }
@@ -529,15 +547,15 @@
                 
                 el.innerHTML = `
                     <div class="flex justify-between items-start mb-2">
-                        <span class="font-bold font-mono text-sm">#${shortId}</span>
-                        <span class="text-xs font-medium px-2 py-1 rounded-lg ${badgeClass}">${badgeText}</span>
+                        <span class="font-bold text-sm text-brand-dark">${orderLabel}</span>
+                        <span class="text-[11px] font-medium px-2 py-0.5 rounded-lg ${badgeClass}">${badgeText}</span>
                     </div>
                     <div class="text-xs text-brand-muted mb-3 flex items-center gap-1">
                         <i data-lucide="clock" class="w-3 h-3"></i> ${timeAgo(order.createdAt)}
                     </div>
-                    <div class="flex justify-between items-center text-sm font-medium">
-                        <span>${totalItems} items</span>
-                        <span>${totalPrints} prints total</span>
+                    <div class="flex justify-between items-center text-xs font-medium">
+                        <span class="text-slate-600">${totalItems} photo${totalItems === 1 ? '' : 's'}</span>
+                        <span class="font-bold text-brand-purple">${totalPrints} print${totalPrints === 1 ? '' : 's'}</span>
                     </div>
                 `;
                 
@@ -555,17 +573,18 @@
         function updateOrderDetailsHeader() {
             const order = orders.find(o => o.id === selectedOrderId || o.orderId === selectedOrderId);
             if (!order) return;
-            document.getElementById('detail-order-id').innerText = '#' + (order.id || order.orderId).substring(0, 8);
+            const orderLabel = order.orderNumber ? `Order #${order.orderNumber}` : `#${(order.id || order.orderId).substring(0, 6)}`;
+            document.getElementById('detail-order-id').innerText = orderLabel;
             document.getElementById('detail-order-time').innerText = timeAgo(order.createdAt);
 
             const badgeEl = document.getElementById('detail-order-status-badge');
             if (order.status === 'printed') {
                 badgeEl.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200';
-                badgeEl.innerText = 'Previous / Printed';
+                badgeEl.innerText = order.tokenNumber ? `Printed (Token #${order.tokenNumber})` : 'Previous / Printed';
                 badgeEl.classList.remove('hidden');
-            } else if (order.status === 'ready') {
+            } else if (order.status === 'ready' || order.status === 'approved') {
                 badgeEl.className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full bg-green-100 text-green-700';
-                badgeEl.innerText = 'Ready to Print';
+                badgeEl.innerText = 'Approved & Queued for Batch Print';
                 badgeEl.classList.remove('hidden');
             } else {
                 badgeEl.classList.add('hidden');
@@ -736,7 +755,7 @@
             lucide.createIcons();
         }
 
-        // Approve All Items in the selected order AND Auto-Generate & Download PDF
+        // Approve All Items in the selected order -> Queues them into the A4 batch
         async function approveAllSelectedOrder() {
             if (!selectedOrderId) return;
             const order = orders.find(o => o.id === selectedOrderId || o.orderId === selectedOrderId);
@@ -752,11 +771,12 @@
             renderOrderDetails();
             updateStats();
             renderOrderList();
-            showToast('All active items approved! Auto-generating print sheet & downloading...', 'info');
+            
+            const orderLabel = order.orderNumber ? `Order #${order.orderNumber}` : '';
+            showToast(`${orderLabel} approved! Added to A4 Print Batch 📄`, 'success');
 
             try {
                 await fetch(`/api/orders/${order.id}/approve-all`, { method: 'POST' });
-                await generateSheet(order.id, true);
             } catch (err) {
                 console.warn('Approve all error:', err);
             }

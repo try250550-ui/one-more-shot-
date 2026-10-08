@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 const { processPhoto, buildPolaroidCard, buildA4Sheets } = require('../services/imageProcessor');
 const { generatePDF } = require('../services/pdfGenerator');
 
-const { getAllOrders, saveOrder, updateOrderPrintedAt, getNextTokenNumber } = require('../db');
+const { getAllOrders, saveOrder, updateOrderPrintedAt, getNextTokenNumber, getNextOrderNumber } = require('../db');
 
 const basicAuth = require('express-basic-auth');
 
@@ -103,9 +103,11 @@ router.post('/', prepareUpload, handleUpload, async (req, res) => {
             };
         }));
 
+        const orderNum = getNextOrderNumber();
         const newOrder = {
             id: orderId,
             orderId: orderId,
+            orderNumber: orderNum,
             timestamp: new Date().toISOString(),
             createdAt: new Date().toISOString(),
             status: 'pending',
@@ -120,8 +122,8 @@ router.post('/', prepareUpload, handleUpload, async (req, res) => {
             broadcastWS({ event: 'new_order', order: newOrder });
         }
 
-        console.log(`[Order Intake] New R2 order ${orderId} with ${itemsWithPhotos.length} polaroids.`);
-        res.json({ success: true, orderId, order: newOrder });
+        console.log(`[Order Intake] New Order #${orderNum} (${orderId}) with ${itemsWithPhotos.length} polaroids.`);
+        res.json({ success: true, orderId, orderNumber: orderNum, order: newOrder });
     } catch (err) {
         console.error('[Order Error]', err);
         res.status(500).json({ error: 'Internal server error', details: err.message });

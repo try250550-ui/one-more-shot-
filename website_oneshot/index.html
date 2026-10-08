@@ -1366,15 +1366,15 @@
         polaroidBatch.forEach(p => total += p.copies);
 
         if (data.success) {
-          showOrderSuccessModal(data.orderId, total);
+          showOrderSuccessModal(data.orderId, total, data.orderNumber);
         } else {
-          showOrderSuccessModal('demo-' + Date.now().toString().slice(-6), total);
+          showOrderSuccessModal('demo-' + Date.now().toString().slice(-4), total, null);
         }
       } catch (err) {
         console.warn('Backend offline or submission fallback:', err);
         let total = 0;
         polaroidBatch.forEach(p => total += p.copies);
-        showOrderSuccessModal('offline-' + Date.now().toString().slice(-6), total);
+        showOrderSuccessModal('offline-' + Date.now().toString().slice(-4), total, null);
       } finally {
         submitBtns.forEach(b => {
           b.disabled = false;
@@ -1384,21 +1384,21 @@
       }
     }
 
-    function showOrderSuccessModal(orderId, totalPrints) {
+    function showOrderSuccessModal(orderId, totalPrints, orderNumber) {
       const modal = document.getElementById('order-modal');
       const modalId = document.getElementById('modal-order-id');
       const modalPhotoCount = document.getElementById('modal-photo-count');
       const modalCount = document.getElementById('modal-order-count');
       const modalWaBtn = document.getElementById('modal-whatsapp-btn');
       
-      const shortId = (orderId.length > 12 ? orderId.substring(0, 10) : orderId);
+      const orderLabel = orderNumber ? `Order #${orderNumber}` : '#' + (orderId.length > 8 ? orderId.substring(0, 8) : orderId);
       const photoCount = polaroidBatch.length;
 
-      // Automated WhatsApp text with Order Number & Photo Count
-      const waMessage = `✨ Hello One More Shot! 📸\n\nI just placed an order on your website:\n• Order #: ${shortId}\n• Photos Uploaded: ${photoCount} photo${photoCount === 1 ? '' : 's'}\n• Total Prints: ${totalPrints} print${totalPrints === 1 ? '' : 's'}\n\nPlease confirm my order! Thank you ♡`;
+      // Automated WhatsApp text with Clean Order Number & Photo Count
+      const waMessage = `✨ Hello One More Shot! 📸\n\nI just placed an order on your website:\n• ${orderLabel}\n• Photos Uploaded: ${photoCount} photo${photoCount === 1 ? '' : 's'}\n• Total Prints: ${totalPrints} print${totalPrints === 1 ? '' : 's'}\n\nPlease confirm my order! Thank you ♡`;
       const waUrl = `https://wa.me/918073892740?text=${encodeURIComponent(waMessage)}`;
 
-      modalId.textContent = '#' + shortId;
+      modalId.textContent = orderLabel;
       if (modalPhotoCount) {
         modalPhotoCount.textContent = `${photoCount} Photo${photoCount === 1 ? '' : 's'}`;
       }
