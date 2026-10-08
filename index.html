@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Patrick+Hand&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
@@ -30,6 +30,8 @@
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            bimbo: ['"Caveat"', 'cursive'],
+            student: ['"Patrick Hand"', 'cursive', 'sans-serif'],
             handwriting: ['"Caveat"', 'cursive'],
             serif: ['"Playfair Display"', 'serif']
           }
@@ -447,16 +449,16 @@
             <!-- Font Style Picker -->
             <div class="flex items-center justify-between pt-1">
               <div class="flex items-center gap-2">
-                <span class="text-xs text-brand-muted">Font:</span>
-                <button onclick="setFont('handwriting')" id="f-hand" class="px-3 py-1 rounded-lg border-2 border-brand-purple bg-brand-lavender text-xs font-handwriting text-base font-bold text-brand-purple">
-                  Handwriting
+                <span class="text-xs text-brand-muted">Font Style:</span>
+                <button onclick="setFont('bimbo')" id="f-bimbo" class="px-3 py-1.5 rounded-xl border-2 border-brand-purple bg-brand-lavender text-xs font-bimbo text-base font-bold text-brand-purple shadow-2xs transition">
+                  Bimbo
                 </button>
-                <button onclick="setFont('modern')" id="f-mod" class="px-3 py-1 rounded-lg border border-brand-border bg-white text-xs font-sans text-brand-muted hover:text-brand-dark">
-                  Modern
+                <button onclick="setFont('student')" id="f-student" class="px-3 py-1.5 rounded-xl border border-brand-border bg-white text-xs font-student text-sm font-bold text-brand-muted hover:text-brand-dark transition">
+                  Student
                 </button>
               </div>
 
-              <button onclick="duplicateActivePolaroid()" class="px-3 py-1 rounded-lg bg-brand-lavender/50 hover:bg-brand-lavender text-xs text-brand-purple font-bold border border-brand-border flex items-center gap-1 transition">
+              <button onclick="duplicateActivePolaroid()" class="px-3 py-1.5 rounded-xl bg-brand-lavender/50 hover:bg-brand-lavender text-xs text-brand-purple font-bold border border-brand-border flex items-center gap-1 transition">
                 <i data-lucide="copy" class="w-3 h-3"></i>
                 <span>Duplicate</span>
               </button>
@@ -956,23 +958,37 @@
       renderTray();
     }
 
-    // Font switcher
+    // Font switcher: 'bimbo' vs 'student'
     function setFont(font, updateState = true) {
+      const activeFont = (font === 'student' || font === 'modern') ? 'student' : 'bimbo';
       if (updateState && polaroidBatch.length > 0) {
-        polaroidBatch[activeIndex].font = font;
+        polaroidBatch[activeIndex].font = activeFont;
       }
       const caption = document.getElementById('live-caption-text');
-      const fHand = document.getElementById('f-hand');
-      const fMod = document.getElementById('f-mod');
+      const fBimbo = document.getElementById('f-bimbo');
+      const fStudent = document.getElementById('f-student');
+      const captionInput = document.getElementById('caption-input');
 
-      if (font === 'handwriting') {
-        caption.style.fontFamily = "'Caveat', cursive";
-        fHand.className = "px-3 py-1 rounded-lg border-2 border-brand-purple bg-brand-lavender text-xs font-handwriting text-base font-bold text-brand-purple";
-        fMod.className = "px-3 py-1 rounded-lg border border-brand-border bg-white text-xs font-sans text-brand-muted hover:text-brand-dark";
+      if (activeFont === 'student') {
+        caption.style.fontFamily = "'Patrick Hand', cursive, sans-serif";
+        caption.style.fontWeight = "700";
+        if (captionInput) {
+          captionInput.style.fontFamily = "'Patrick Hand', cursive, sans-serif";
+        }
+        if (fStudent && fBimbo) {
+          fStudent.className = "px-3 py-1.5 rounded-xl border-2 border-brand-purple bg-brand-lavender text-xs font-student text-base font-bold text-brand-purple shadow-2xs transition";
+          fBimbo.className = "px-3 py-1.5 rounded-xl border border-brand-border bg-white text-xs font-bimbo text-base font-bold text-brand-muted hover:text-brand-dark transition";
+        }
       } else {
-        caption.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
-        fMod.className = "px-3 py-1 rounded-lg border-2 border-brand-purple bg-brand-lavender text-xs font-sans font-bold text-brand-purple";
-        fHand.className = "px-3 py-1 rounded-lg border border-brand-border bg-white text-xs font-handwriting text-base text-brand-muted hover:text-brand-dark";
+        caption.style.fontFamily = "'Caveat', cursive, sans-serif";
+        caption.style.fontWeight = "700";
+        if (captionInput) {
+          captionInput.style.fontFamily = "'Caveat', cursive, sans-serif";
+        }
+        if (fStudent && fBimbo) {
+          fBimbo.className = "px-3 py-1.5 rounded-xl border-2 border-brand-purple bg-brand-lavender text-xs font-bimbo text-base font-bold text-brand-purple shadow-2xs transition";
+          fStudent.className = "px-3 py-1.5 rounded-xl border border-brand-border bg-white text-xs font-student text-base font-bold text-brand-muted hover:text-brand-dark transition";
+        }
       }
     }
 
@@ -991,7 +1007,7 @@
             caption: '',
             tilt: -1.5,
             size: 24,
-            font: 'handwriting',
+            font: 'bimbo',
             copies: 1,
             zoom: 1,
             panX: 0,
@@ -1014,7 +1030,7 @@
         caption: '',
         tilt: 0,
         size: 24,
-        font: 'handwriting',
+        font: 'bimbo',
         copies: 1,
         zoom: 1,
         panX: 0,

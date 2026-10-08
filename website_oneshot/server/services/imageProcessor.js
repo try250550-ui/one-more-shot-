@@ -95,13 +95,35 @@ async function processPhoto(inputPath, options = {}) {
         .toBuffer();
 }
 
+const fontsDir = path.join(__dirname, '..', 'fonts');
+let caveatBase64 = '';
+let patrickHandBase64 = '';
+let plusJakartaBase64 = '';
+
+try {
+    const caveatPath = path.join(fontsDir, 'Caveat.ttf');
+    if (fs.existsSync(caveatPath)) {
+        caveatBase64 = fs.readFileSync(caveatPath).toString('base64');
+    }
+    const patrickPath = path.join(fontsDir, 'PatrickHand.ttf');
+    if (fs.existsSync(patrickPath)) {
+        patrickHandBase64 = fs.readFileSync(patrickPath).toString('base64');
+    }
+    const pjsPath = path.join(fontsDir, 'PlusJakartaSans.ttf');
+    if (fs.existsSync(pjsPath)) {
+        plusJakartaBase64 = fs.readFileSync(pjsPath).toString('base64');
+    }
+} catch (e) {
+    console.warn('[Font Load Error]', e.message);
+}
+
 async function buildPolaroidCard(inputPath, options = {}) {
     const {
         format = 'mini',
         caption = '',
         tilt = -1.5,
         fontSize = 24,
-        font = 'handwriting',
+        font = 'bimbo',
         zoom = 1,
         panX = 0,
         panY = 0
@@ -126,17 +148,41 @@ async function buildPolaroidCard(inputPath, options = {}) {
         .replace(/>/g, '&gt;');
 
     const hasCaption = safeCaption.length > 0;
-    const fontFamily = font === 'modern' ? 'Plus Jakarta Sans, sans-serif' : 'Caveat, cursive, sans-serif';
-    const captionFontSize = Math.max(16, Math.min(48, Math.round((fontSize || 24) * (isMini ? 1.4 : 1.6))));
+    
+    // Choose font family based on user selection: 'bimbo' or 'student'
+    const isStudentFont = font === 'student' || font === 'modern';
+    const chosenFontFamily = isStudentFont ? "'StudentFont', 'Patrick Hand', cursive, sans-serif" : "'BimboFont', 'Caveat', cursive, sans-serif";
+    
+    const captionFontSize = Math.max(16, Math.min(52, Math.round((fontSize || 24) * (isMini ? 1.45 : 1.65))));
     const captionY = Math.round(bottomAreaH * 0.48);
     const footerY = Math.round(bottomAreaH * 0.85);
 
     const captionSvg = `
         <svg width="${cardW}" height="${bottomAreaH}" xmlns="http://www.w3.org/2000/svg">
-            <style>
-                .caption { font-family: ${fontFamily}; font-size: ${captionFontSize}px; font-weight: 700; fill: #261a38; text-anchor: middle; }
-                .footer { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; fill: #7d38be; letter-spacing: 1px; }
-            </style>
+            <defs>
+                <style>
+                    ${caveatBase64 ? `@font-face {
+                        font-family: 'BimboFont';
+                        src: url('data:font/truetype;charset=utf-8;base64,${caveatBase64}') format('truetype');
+                        font-weight: 700;
+                        font-style: normal;
+                    }` : ''}
+                    ${patrickHandBase64 ? `@font-face {
+                        font-family: 'StudentFont';
+                        src: url('data:font/truetype;charset=utf-8;base64,${patrickHandBase64}') format('truetype');
+                        font-weight: 700;
+                        font-style: normal;
+                    }` : ''}
+                    ${plusJakartaBase64 ? `@font-face {
+                        font-family: 'PlusJakarta';
+                        src: url('data:font/truetype;charset=utf-8;base64,${plusJakartaBase64}') format('truetype');
+                        font-weight: 700;
+                        font-style: normal;
+                    }` : ''}
+                    .caption { font-family: ${chosenFontFamily}; font-size: ${captionFontSize}px; font-weight: 700; fill: #261a38; text-anchor: middle; }
+                    .footer { font-family: 'PlusJakarta', 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; fill: #7d38be; letter-spacing: 1px; }
+                </style>
+            </defs>
             ${hasCaption ? `
             <g transform="translate(${cardW / 2}, ${captionY}) rotate(${tilt || 0})">
                 <text class="caption" x="0" y="0">${safeCaption}</text>

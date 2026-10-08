@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Patrick+Hand&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,6 +28,8 @@
                     },
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        bimbo: ['"Caveat"', 'cursive'],
+                        student: ['"Patrick Hand"', 'cursive', 'sans-serif'],
                         handwriting: ['Caveat', 'cursive'],
                     }
                 }
@@ -667,6 +669,8 @@
                 el.className = `p-3.5 rounded-2xl border-2 transition-all duration-300 relative ${statusClass}`;
                 el.dataset.itemId = item.id;
                 
+                const fontClass = (item.font === 'student' || item.font === 'modern') ? 'font-student text-base font-bold' : 'font-bimbo text-lg font-bold';
+
                 el.innerHTML = `
                     ${statusBadge}
                     <!-- Photo Sequential Number Badge -->
@@ -685,8 +689,8 @@
 
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex-1 pr-2">
-                            <div class="text-[10px] font-bold uppercase tracking-wider text-brand-purple mb-0.5">${item.type || item.format} Format</div>
-                            <p class="text-sm font-handwriting text-lg leading-tight line-clamp-2 text-slate-800" title="${item.caption || 'No caption'}">${item.caption || '<span class="text-gray-400 italic">No caption</span>'}</p>
+                            <div class="text-[10px] font-bold uppercase tracking-wider text-brand-purple mb-0.5">${item.type || item.format} Format • ${item.font === 'student' ? 'Student Font' : 'Bimbo Font'}</div>
+                            <p class="text-sm ${fontClass} leading-tight line-clamp-2 text-slate-800" title="${item.caption || 'No caption'}">${item.caption || '<span class="text-gray-400 italic font-sans text-xs">No caption</span>'}</p>
                         </div>
                         <div class="bg-brand-lavender px-2 py-0.5 rounded-lg text-xs font-bold font-mono text-brand-purple shrink-0">
                             x${item.copies}
