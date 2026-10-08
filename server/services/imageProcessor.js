@@ -34,7 +34,7 @@ async function safeLoadToBuffer(input) {
 
         return await sharp(buffer, { failOn: 'none' })
             .rotate()              // auto-rotate by EXIF orientation
-            .jpeg({ quality: 95 })
+            .png({ compressionLevel: 0, effort: 1 })  // lossless — zero quality loss
             .toBuffer();
     } catch (err) {
         console.warn(`[safeLoad] Fallback for ${input}: ${err.message}`);
