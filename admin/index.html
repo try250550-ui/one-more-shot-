@@ -791,7 +791,14 @@
                         o.tokenNumber = data.tokenNumber || o.tokenNumber;
                     });
                     
-                    window.open(`${data.pdfUrl}`, '_blank');
+                    // Direct file download trigger that bypasses popup blockers
+                    const dlLink = document.createElement('a');
+                    dlLink.href = data.pdfUrl;
+                    dlLink.setAttribute('download', `One More Shot Token ${data.tokenNumber || ''}.pdf`);
+                    document.body.appendChild(dlLink);
+                    dlLink.click();
+                    setTimeout(() => dlLink.remove(), 1000);
+
                     updateStats();
                     renderOrderList();
                     if (selectedOrderId) renderOrderDetails();
@@ -839,15 +846,21 @@
             } catch (e) {}
         }
 
-        // Download PDF
+        // Download PDF directly without pop-up blocker issues
         function downloadPDF(orderId, markAsDone = true) {
-            showToast('Starting A4 Print Sheet download...', 'info');
-            window.open(`/api/orders/${orderId}/download`, '_blank');
+            showToast('Downloading A4 Print Sheet...', 'info');
+            
+            const dlLink = document.createElement('a');
+            dlLink.href = `/api/orders/${orderId}/download`;
+            dlLink.setAttribute('download', '');
+            document.body.appendChild(dlLink);
+            dlLink.click();
+            setTimeout(() => dlLink.remove(), 1000);
             
             if (markAsDone) {
                 setTimeout(() => {
                     markOrderPrinted(orderId);
-                }, 600);
+                }, 800);
             }
         }
 
