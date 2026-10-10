@@ -1,7 +1,55 @@
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
+const opentype = require('opentype.js');
 const { downloadFromR2 } = require('./r2Storage');
+
+// Pre-load fonts once at startup so text can be converted to vector paths
+// This guarantees identical rendering on any OS / server (bypasses librsvg font system)
+const fontsDir = path.join(__dirname, '..', 'fonts');
+let opentypeFonts = {};
+
+try {
+    const fontFiles = { bimbo: 'Caveat.ttf', student: 'PatrickHand.ttf', footer: 'PlusJakartaSans.ttf' };
+    for (const [key, file] of Object.entries(fontFiles)) {
+        const fp = path.join(fontsDir, file);
+        if (fs.existsSync(fp)) {
+            const buf = fs.readFileSync(fp);
+            opentypeFonts[key] = opentype.parse(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
+        }
+    }
+    console.log('[Fonts] Loaded:', Object.keys(opentypeFonts).join(', '));
+} catch (e) {
+    console.warn('[Font Load Error]', e.message);
+}
+
+/**
+ * Converts a text string to an SVG path element using the true TTF glyph outlines.
+ * This is the ONLY reliable way to render custom fonts with Sharp/librsvg on Linux.
+ */
+function textToSvgPath(text, fontKey, fontSize, x, y, textAnchor = 'middle', fill = '#261a38') {
+    const font = opentypeFonts[fontKey];
+    if (!font || !text) return '';
+    try {
+        // Measure width for centering
+        const glyphs = font.stringToGlyphs(text);
+        let totalWidth = 0;
+        for (const g of glyphs) {
+            totalWidth += g.advanceWidth;
+        }
+        const scale = fontSize / font.unitsPerEm;
+        const textWidth = totalWidth * scale;
+
+        let drawX = x;
+        if (textAnchor === 'middle') drawX = x - textWidth / 2;
+        if (textAnchor === 'end') drawX = x - textWidth;
+
+        const pathObj = font.getPath(text, drawX, y, fontSize);
+        return `<path d="${pathObj.toPathData(2)}" fill="${fill}" />`;
+    } catch (e) {
+        return '';
+    }
+}
 
 /**
  * Exact Polaroid Specifications at 300 DPI:
@@ -95,28 +143,6 @@ async function processPhoto(inputPath, options = {}) {
         .toBuffer();
 }
 
-const fontsDir = path.join(__dirname, '..', 'fonts');
-let caveatBase64 = '';
-let patrickHandBase64 = '';
-let plusJakartaBase64 = '';
-
-try {
-    const caveatPath = path.join(fontsDir, 'Caveat.ttf');
-    if (fs.existsSync(caveatPath)) {
-        caveatBase64 = fs.readFileSync(caveatPath).toString('base64');
-    }
-    const patrickPath = path.join(fontsDir, 'PatrickHand.ttf');
-    if (fs.existsSync(patrickPath)) {
-        patrickHandBase64 = fs.readFileSync(patrickPath).toString('base64');
-    }
-    const pjsPath = path.join(fontsDir, 'PlusJakartaSans.ttf');
-    if (fs.existsSync(pjsPath)) {
-        plusJakartaBase64 = fs.readFileSync(pjsPath).toString('base64');
-    }
-} catch (e) {
-    console.warn('[Font Load Error]', e.message);
-}
-
 async function buildPolaroidCard(inputPath, options = {}) {
     const {
         format = 'mini',
@@ -141,56 +167,43 @@ async function buildPolaroidCard(inputPath, options = {}) {
     // 1. Process photo to exact window
     const photoBuffer = await processPhoto(inputPath, { format, zoom, panX, panY });
 
-    // 2. Generate Caption SVG overlay
-    const safeCaption = (caption || '').trim()
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-
+    // 2. Generate Caption SVG overlay using vector paths (not <text>) so fonts are guaranteed
+    const safeCaption = (caption || '').trim();
     const hasCaption = safeCaption.length > 0;
-    
-    // Choose font family based on user selection: 'bimbo' or 'student'
-    const isStudentFont = font === 'student' || font === 'modern';
-    const chosenFontFamily = isStudentFont ? "'StudentFont', 'Patrick Hand', cursive, sans-serif" : "'BimboFont', 'Caveat', cursive, sans-serif";
-    
-    const captionFontSize = Math.max(16, Math.min(52, Math.round((fontSize || 24) * (isMini ? 1.45 : 1.65))));
-    const captionY = Math.round(bottomAreaH * 0.48);
-    const footerY = Math.round(bottomAreaH * 0.85);
 
-    const captionSvg = `
-        <svg width="${cardW}" height="${bottomAreaH}" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <style>
-                    ${caveatBase64 ? `@font-face {
-                        font-family: 'BimboFont';
-                        src: url('data:font/truetype;charset=utf-8;base64,${caveatBase64}') format('truetype');
-                        font-weight: 700;
-                        font-style: normal;
-                    }` : ''}
-                    ${patrickHandBase64 ? `@font-face {
-                        font-family: 'StudentFont';
-                        src: url('data:font/truetype;charset=utf-8;base64,${patrickHandBase64}') format('truetype');
-                        font-weight: 700;
-                        font-style: normal;
-                    }` : ''}
-                    ${plusJakartaBase64 ? `@font-face {
-                        font-family: 'PlusJakarta';
-                        src: url('data:font/truetype;charset=utf-8;base64,${plusJakartaBase64}') format('truetype');
-                        font-weight: 700;
-                        font-style: normal;
-                    }` : ''}
-                    .caption { font-family: ${chosenFontFamily}; font-size: ${captionFontSize}px; font-weight: 700; fill: #261a38; text-anchor: middle; }
-                    .footer { font-family: 'PlusJakarta', 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; fill: #7d38be; letter-spacing: 1px; }
-                </style>
-            </defs>
-            ${hasCaption ? `
-            <g transform="translate(${cardW / 2}, ${captionY}) rotate(${tilt || 0})">
-                <text class="caption" x="0" y="0">${safeCaption}</text>
-            </g>` : ''}
-            <text class="footer" x="${leftMargin + 10}" y="${footerY}">ONE MORE SHOT</text>
-            <text class="footer" x="${cardW - leftMargin - 10}" y="${footerY}" text-anchor="end">@_one.moreshot_</text>
-        </svg>
-    `;
+    const isStudentFont = font === 'student' || font === 'modern';
+    const fontKey = isStudentFont ? 'student' : 'bimbo';
+
+    const captionFontSize = Math.max(16, Math.min(52, Math.round((fontSize || 24) * (isMini ? 1.45 : 1.65))));
+    const captionY = Math.round(bottomAreaH * 0.50);  // baseline
+    const footerY = Math.round(bottomAreaH * 0.88);   // baseline for footer
+
+    // Caption: centered horizontally, tilted around its center point
+    let captionPathEl = '';
+    if (hasCaption && opentypeFonts[fontKey]) {
+        const f = opentypeFonts[fontKey];
+        // Measure actual text width
+        const glyphs = f.stringToGlyphs(safeCaption);
+        const totalUnits = glyphs.reduce((s, g) => s + (g.advanceWidth || 0), 0);
+        const textWidth = totalUnits * (captionFontSize / f.unitsPerEm);
+        const startX = (cardW - textWidth) / 2;
+        const pathObj = f.getPath(safeCaption, startX, captionY, captionFontSize);
+        const d = pathObj.toPathData(2);
+        // Rotate around the text center
+        const cx = cardW / 2;
+        const cy = captionY - captionFontSize * 0.35; // approx mid-glyph
+        captionPathEl = `<g transform="rotate(${tilt || 0}, ${cx}, ${cy})"><path d="${d}" fill="#261a38"/></g>`;
+    }
+
+    // Footer paths (left and right aligned)
+    const footerLeftPath = textToSvgPath('ONE MORE SHOT', 'footer', 15, leftMargin + 10, footerY, 'start', '#7d38be');
+    const footerRightPath = textToSvgPath('@_one.moreshot_', 'footer', 15, cardW - leftMargin - 10, footerY, 'end', '#7d38be');
+
+    const captionSvg = `<svg width="${cardW}" height="${bottomAreaH}" xmlns="http://www.w3.org/2000/svg">
+        ${captionPathEl}
+        ${footerLeftPath}
+        ${footerRightPath}
+    </svg>`;
 
     // 3. Composite onto white card
     const card = sharp({
@@ -319,10 +332,7 @@ async function buildA4Sheets(items) {
         const y2 = currentY + cardH;
 
         guideSvgElements.push(`
-            <!-- Card Perimeter Dashed Cut Line -->
-            <rect class="cut-dashed" x="${x1}" y="${y1}" width="${cardW}" height="${cardH}" />
-            
-            <!-- Corner Crop Marks (Standard Lab Guillotine Guides) -->
+            <!-- Corner Crop Marks only — no full border (saves ink) -->
             <!-- Top-Left -->
             <line class="crop-solid" x1="${x1 - L}" y1="${y1}" x2="${x1 + L}" y2="${y1}" />
             <line class="crop-solid" x1="${x1}" y1="${y1 - L}" x2="${x1}" y2="${y1 + L}" />
