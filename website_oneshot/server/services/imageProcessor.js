@@ -1,7 +1,7 @@
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
-const opentype = require('opentype.js');
+const opentype = require(path.join(__dirname, '..', 'lib', 'opentype.min.js'));
 const { downloadFromR2 } = require('./r2Storage');
 
 // Pre-load fonts once at startup so text can be converted to vector paths
