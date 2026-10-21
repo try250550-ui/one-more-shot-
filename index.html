@@ -3,8 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>One More Shot - Preserve Your Memories in Print</title>
-  <meta name="description" content="One More Shot. Custom Mini and Wide Polaroids delivered directly to you.">
+  <title>One More Shot - Custom Polaroid Prints & Photo Booth in Bengaluru</title>
+  <meta name="description" content="Custom Mini and Wide Polaroid prints and photo booth for parties and college fests in Bengaluru. Upload your photos and order on WhatsApp.">
+  <link rel="canonical" href="https://one-more-shot.onrender.com">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="public/logo_transparent.png">
+  <link rel="apple-touch-icon" href="public/logo_transparent.png">
+
+  <!-- Open Graph / Facebook / WhatsApp Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://one-more-shot.onrender.com">
+  <meta property="og:title" content="One More Shot - Custom Polaroid Prints & Photo Booth in Bengaluru">
+  <meta property="og:description" content="Custom Mini and Wide Polaroid prints and photo booth for parties and college fests in Bengaluru. Upload your photos and order on WhatsApp.">
+  <meta property="og:image" content="https://one-more-shot.onrender.com/public/logo_transparent.png">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- Twitter Preview -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="One More Shot - Custom Polaroid Prints & Photo Booth in Bengaluru">
+  <meta name="twitter:description" content="Custom Mini and Wide Polaroid prints and photo booth for parties and college fests in Bengaluru. Upload your photos and order on WhatsApp.">
+  <meta name="twitter:image" content="https://one-more-shot.onrender.com/public/logo_transparent.png">
+
+  <!-- Schema.org LocalBusiness Markup for Bengaluru Search Ranking -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "One More Shot",
+    "image": "https://one-more-shot.onrender.com/public/logo_transparent.png",
+    "telephone": "+918073892740",
+    "url": "https://one-more-shot.onrender.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Bengaluru",
+      "addressRegion": "Karnataka",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 12.9716,
+      "longitude": 77.5946
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "09:00",
+      "closes": "22:00"
+    },
+    "priceRange": "₹₹",
+    "description": "Custom Mini and Wide Polaroid prints and photo booth for parties and college fests in Bengaluru. Upload your photos and order on WhatsApp."
+  }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -106,8 +156,9 @@
       </a>
 
       <!-- Navigation Links -->
-      <nav class="hidden md:flex items-center gap-8 text-xs font-semibold text-brand-muted">
+      <nav class="hidden md:flex items-center gap-7 text-xs font-semibold text-brand-muted">
         <a href="#home" class="hover:text-brand-purple transition">Home</a>
+        <a href="#how-it-works" class="hover:text-brand-purple transition">How It Works</a>
         <a href="#get-polaroids" class="hover:text-brand-purple transition">Get Your Polaroids</a>
         <a href="#about-us" class="hover:text-brand-purple transition">About Us</a>
         <a href="#contact" class="hover:text-brand-purple transition">Contact</a>
@@ -128,15 +179,15 @@
   </header>
 
   <!-- ==================== SECTION 1: HERO / HOME ==================== -->
-  <section id="home" class="max-w-6xl mx-auto px-4 pt-12 pb-16 md:py-20">
+  <section id="home" class="max-w-6xl mx-auto px-4 pt-12 pb-14 md:py-18">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
       
       <!-- Left Content -->
       <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-lavender border border-brand-border text-brand-purple text-xs font-bold">
-          <span>✨ One More Shot Studio</span>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-lavender border border-brand-border text-brand-purple text-xs font-bold shadow-2xs">
+          <span>✨ One More Shot Studio • Bengaluru</span>
           <span class="w-1.5 h-1.5 rounded-full bg-brand-purple"></span>
-          <span>Mini & Wide Polaroids</span>
+          <span>Mini &amp; Wide Polaroids</span>
         </div>
 
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-brand-dark tracking-tight leading-[1.14]">
@@ -145,7 +196,7 @@
         </h1>
 
         <p class="text-sm md:text-base text-brand-muted max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal">
-          Upload your favorite photos, mix Mini & Wide polaroid formats, customize handwritten captions, and print multiple copies delivered directly to you.
+          Custom Mini &amp; Wide Polaroid prints and live event photo booth in Bengaluru. Upload your favorite photos, customize handwritten captions, and order seamlessly via WhatsApp.
         </p>
 
         <!-- CTA Buttons -->
@@ -154,8 +205,8 @@
             <span>Create Your Polaroids</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </a>
-          <a href="#about-us" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-white hover:bg-brand-lavender/50 border border-brand-border text-xs font-bold text-brand-dark transition shadow-2xs">
-            <span>Read Our Story</span>
+          <a href="#how-it-works" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-white hover:bg-brand-lavender/50 border border-brand-border text-xs font-bold text-brand-dark transition shadow-2xs">
+            <span>How It Works</span>
           </a>
         </div>
       </div>
@@ -201,6 +252,66 @@
 
         </div>
 
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== HOW IT WORKS SECTION ==================== -->
+  <section id="how-it-works" class="max-w-6xl mx-auto px-4 py-12 border-t border-brand-border/60">
+    <div class="text-center max-w-xl mx-auto space-y-1.5 mb-10">
+      <span class="text-xs font-bold text-brand-purple tracking-widest uppercase bg-brand-lavender px-3 py-1 rounded-full border border-purple-200">
+        Simple 3-Step Process
+      </span>
+      <h2 class="text-3xl font-extrabold text-brand-dark tracking-tight">How It Works</h2>
+      <p class="text-xs text-brand-muted">Turn your phone gallery into real keepsake Polaroids in under 2 minutes</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Step 1 -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 shadow-xs hover:border-brand-purple transition space-y-3 relative overflow-hidden group">
+        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center font-bold text-lg shadow-inner">
+          1
+        </div>
+        <h3 class="text-base font-extrabold text-brand-dark">Upload Your Photos</h3>
+        <p class="text-xs text-brand-muted leading-relaxed">
+          Select one or multiple photos directly from your phone or PC. High-resolution support ensures crystal-clear detail.
+        </p>
+        <div class="text-[11px] font-bold text-brand-purple flex items-center gap-1 pt-1">
+          <i data-lucide="image" class="w-3.5 h-3.5"></i>
+          <span>Single or Batch Upload</span>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 shadow-xs hover:border-brand-purple transition space-y-3 relative overflow-hidden group">
+        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center font-bold text-lg shadow-inner">
+          2
+        </div>
+        <h3 class="text-base font-extrabold text-brand-dark">Customize Your Style</h3>
+        <p class="text-xs text-brand-muted leading-relaxed">
+          Choose between Mini &amp; Wide formats, crop and pan your picture, and add custom handwritten captions in Bimbo or Student font.
+        </p>
+        <div class="text-[11px] font-bold text-brand-purple flex items-center gap-1 pt-1">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Live Interactive Preview</span>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="bg-white border border-brand-border rounded-3xl p-6 shadow-xs hover:border-brand-purple transition space-y-3 relative overflow-hidden group">
+        <div class="w-12 h-12 rounded-2xl bg-brand-lavender text-brand-purple flex items-center justify-center font-bold text-lg shadow-inner">
+          3
+        </div>
+        <h3 class="text-base font-extrabold text-brand-dark">Print &amp; Deliver in Bengaluru</h3>
+        <p class="text-xs text-brand-muted leading-relaxed">
+          Confirm your order instantly on WhatsApp. We print on 300 DPI archival photo gloss and deliver straight to your doorstep across Bengaluru.
+        </p>
+        <div class="text-[11px] font-bold text-brand-purple flex items-center gap-1 pt-1">
+          <i data-lucide="truck" class="w-3.5 h-3.5"></i>
+          <span>Archival Photo Lab Gloss</span>
+        </div>
       </div>
 
     </div>
@@ -533,11 +644,11 @@
           </h2>
 
           <p class="text-sm text-brand-muted leading-relaxed">
-            Founded by <strong>Akash Rajanna</strong>, <strong>One More Shot</strong> was born out of a simple love for real, tangible memories. In a world of thousands of forgotten phone pictures, a printed Polaroid is something you hold, pin to your wall, tuck into your wallet, or gift to someone you care about.
+            Founded by <strong>Akash Rajanna</strong>, <strong>One More Shot</strong> is a Bengaluru-based boutique Polaroid printing and event photo booth studio born out of a simple love for real, tangible memories. In a world of thousands of forgotten phone pictures, a printed Polaroid is something you hold, pin to your wall, tuck into your wallet, or gift to someone you care about.
           </p>
 
           <p class="text-sm text-brand-muted leading-relaxed">
-            Whether it’s a sun-drenched evening with friends, a college festival, a birthday milestone, or a spontaneous smile, our boutique studio prints each Polaroid with archival photo lab gloss, calibrated margins, and your heartfelt handwritten message.
+            Whether it’s a sun-drenched evening with friends, a college festival, a birthday milestone, or a spontaneous smile, our Bengaluru studio prints each Polaroid with archival photo lab gloss, calibrated margins, and your heartfelt handwritten message.
           </p>
 
           <!-- 3 Core Pillars -->
@@ -573,8 +684,8 @@
 
           <div>
             <h3 class="text-lg font-extrabold text-brand-dark">Akash Rajanna</h3>
-            <p class="text-xs font-bold text-brand-purple">Founder & Lead Photographer</p>
-            <p class="text-[11px] text-brand-muted">One More Shot Photo Booth</p>
+            <p class="text-xs font-bold text-brand-purple">Founder &amp; Lead Photographer</p>
+            <p class="text-[11px] text-brand-muted">One More Shot Photo Booth • Bengaluru</p>
           </div>
 
           <div class="flex items-center gap-2 pt-1">
@@ -642,7 +753,7 @@
             Open 7 Days a Week
           </span>
         </div>
-        <p class="text-[11px] text-brand-muted">Available for parties, college fests & private booth setups</p>
+        <p class="text-[11px] text-brand-muted">Available across Bengaluru for parties, college fests & private booth setups</p>
       </div>
 
     </div>
@@ -656,7 +767,7 @@
       <div class="flex items-center gap-2">
         <span class="font-extrabold text-brand-dark">One More Shot</span>
         <span>•</span>
-        <span class="font-handwriting text-brand-purple text-sm font-bold">for moment’s you’ll remember ♡</span>
+        <span class="font-handwriting text-brand-purple text-sm font-bold">for moments you’ll remember ♡</span>
       </div>
 
       <div class="flex items-center gap-6">
